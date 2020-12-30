@@ -1,24 +1,32 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Categorias from './pages/Categorias';
+import SubCategorias from './pages/SubCategorias';
+
+import Comercios from './pages/Comercio';
+import Usuarios from './pages/Usuarios';
+import Geograficos from './pages/Geograficos';
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        <Navbar />
+        <Switch>
+          <Route path='/' exact component={Home} />
+          <Route path='/categorias' component={Categorias} />
+          <Route path='/subcategorias' component={SubCategorias} />
+          <Route path='/comercios' component={Comercios} />
+          <Route path='/usuarios' component={Usuarios} />
+          <Route path='/geograficos' component={Geograficos} />
+        </Switch>
+      </Router>
+    </>
   );
 }
 
