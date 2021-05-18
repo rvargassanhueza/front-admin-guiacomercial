@@ -7,7 +7,7 @@ import Categorias from './pages/Categorias';
 import SubCategorias from './pages/SubCategorias';
 
 import Comercios from './pages/Comercio';
-import Usuarios from './pages/Usuarios';
+import Usuarios from './components/FormularioUsuario';
 import Geograficos from './pages/Geograficos';
 
 

@@ -13,9 +13,5 @@
 .usuarios,
 .geograficos,
 .subcategorias {
-  display: flex;
-  height: 90vh;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
+  text-align: center;
 }
