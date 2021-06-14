@@ -2,10 +2,9 @@ import React, { useState, useEffect  } from 'react';
 
 // import ComunDataService from '../services/comun.services'
 
-import Usuario from '../components/FormularioUsuario';
+import Usuario from '../components/FormulariolllUsuario';
 
 
-import { Link } from "react-router-dom";
 
 // export default class Usuarios extends Component{
   // constructor(props){
@@ -37,7 +36,7 @@ import { Link } from "react-router-dom";
 
 
   function Usuarios() {
-    const [data, setData]=useState([]);
+    // const [data, setData]=useState([]);
     
   
     return(
