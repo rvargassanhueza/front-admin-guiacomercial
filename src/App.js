@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import Categorias from './pages/Categorias';
 import SubCategorias from './pages/SubCategorias';
 
-import Comercios from './pages/Comercio';
+import Comercios from './components/ComercioAdherido';
 import Usuarios from './components/FormularioUsuario';
 import Geograficos from './pages/Geograficos';
 
