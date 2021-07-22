@@ -2,10 +2,10 @@
     
     import './../../src/App.css';
     import {makeStyles} from '@material-ui/core/styles';
-    import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal,     Button, TextField, Select, MenuItem} from '@material-ui/core';
+    import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal,Button, TextField, Select, MenuItem, FormControl } from '@material-ui/core';
     import {Edit, Delete} from '@material-ui/icons';
     import http from "../http-common";
-    
+    import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator'
     const baseUrl='/usuario/';
     const urlTipoUsuario='/tipo-usuario/'
     
@@ -58,11 +58,11 @@
         const [modalInsertar, setModalInsertar] = useState(false);
     
         const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({
-          // id_usuario: '',
-          // id_tipo_usuario: 0,
-          // nombre_usuario: '',
-          // descripcion_usuario:'',
-          // pass_usuario:''
+          id_usuario: '',
+          id_tipo_usuario: '',
+          nombre_usuario: '',
+          descripcion_usuario:'',
+          pass_usuario:''
         })
     
         const handleChange=e=>{
@@ -72,6 +72,10 @@
             [name]: value
           }))
         }
+
+        const handleSubmit = () => {
+          // your submit logic
+      }
     
         const seleccionarUsuario=(usuario, caso)=>{
           setUsuarioSeleccionado(usuario);
@@ -128,7 +132,8 @@
         const bodyInsertar=(
           <div className={styles.modal}>
             <h3>Agregar Nuevo Usuario</h3>
-            <TextField name="nombre_usuario" className={styles.inputMaterial}     label="Nombre Usuario" onChange={handleChange}/>
+            <TextField name="nombre_usuario" className={styles.inputMaterial}     label="Nombre Usuario" onChange={handleChange} required/>
+
             <br />
             <Select
               labelId="Tipo Usuario"
@@ -136,21 +141,20 @@
               value={itemSelected}
               onChange={handleChange}
               className={styles.inputMaterial}
-              name="id_tipo_usuario"
-              
-            >
+              name="id_tipo_usuario">
+
               {items.map((row, index) => (
               <MenuItem key={index} value={row.id_tipo_usuario}>
                 {row.nombre_tipo_usuario}
               </MenuItem>))}
-              
             </Select>
+            
             <TextField name="descripcion_usuario" className={styles.inputMaterial}     label="Descripción Usuario" onChange={handleChange}/>
             <br />
             <TextField name="pass_usuario" className={styles.inputMaterial}     label="Contraseña Usuario" onChange={handleChange} type="password"/>
             <br /><br />
             <div align="right">
-              <Button color="primary" onClick={()=>insertUser()}>Insertar</Button>
+              <Button type="submit" color="primary" onClick={()=>insertUser()}>Insertar</Button>
               <Button onClick={()=>abrirCerrarModalInsertar()}>Cancelar</Button>
             </div>
           </div>

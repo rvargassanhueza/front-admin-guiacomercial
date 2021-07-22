@@ -2,17 +2,22 @@ import React, {useEffect, useState} from 'react';
 
 import './../../src/App.css';
 import {makeStyles} from '@material-ui/core/styles';
-import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField} from '@material-ui/core';
+import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField, Select, MenuItem, InputLabel, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
 import {Edit, Delete} from '@material-ui/icons';
 import http from "../http-common";
 import http_ from "../http-comercio_adherido"
 
 const baseUrl='/comercioAdherido/';
+const baseUrlLocalidad='/mainData/localidad/';
+const baseUrlCliente='/mainData/cliente/';
+const baseUrlCategoria='/mainData/categoria/';
+
+
 
 const useStyles = makeStyles((theme) => ({
     modal: {
       position: 'absolute',
-      width: 400,
+      width: 600,
       backgroundColor: theme.palette.background.paper,
       border: '2px solid #000',
       boxShadow: theme.shadows[5],
@@ -21,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
       left: '50%',
       transform: 'translate(-50%, -50%)'
     },
+
+    
     iconos:{
       cursor: 'pointer'
     }, 
@@ -42,41 +49,111 @@ const useStyles = makeStyles((theme) => ({
 
     const styles= useStyles();
 
-    const [data, setData] = useState([]);
-    const [modalEliminar, setModalEliminar] = useState(false);
-    const [modalInsertar, setModalInsertar] = useState(false);
+    const [data, setData]                       = useState([]);
+    const [dataId, setDataId]                   = useState([]);
+
+    const [modalEliminar, setModalEliminar]     = useState(false);
+    const [modalInsertar, setModalInsertar]     = useState(false);
+    const [modalEditar, setModalEditar]         = useState(false);
+    const [modalVerMas, setModalVerMas]         = useState(false);
+
+    const [itemSelected, setItemSelected]       = useState();
+    const [items, setItems]                     = useState([]);
+    const [itemsClientes, setItemsClientes]     = useState([]);
+    const [itemsCategorias, setItemsCategorias] = useState([]);
 
     const [comercioSeleccionado, setComercioSeleccionado] = useState({
-      id_comercio_adherido: '',
-      // id_tipo_usuario: '',
-      nombre_comercio_adherido: '',
-      descripcion_comercio_adherido:'',
-      direccion_comercio_adherido:'',
-      numero_direccion_comercio_adherido:'',
-      detalle_comercio_adherido:'',
-      url_facebook_comercio_adherido:'',
-      url_twitter_comercio_adherido:'',
-      url_youtube_comercio_adherido:'',
-      url_whatsapp_comercio_adherido:'',
-      url_instagram_comercio_adherido:'',
-      url_web_comercio_adherido:'',
-      id_localidad:'',
-      id_cliente:'',
+    
+        // id_comercio_adherido: '', 
+        // nombre_comercio_adherido: '',
+        // descripcion_comercio_adherido:'',
+        // direccion_comercio_adherido:'',
+        // numero_direccion_comercio_adherido:'',
+        // detalle_comercio_adherido:'',
+        // url_facebook_comercio_adherido:'',
+        // url_twitter_comercio_adherido:'',
+        // url_youtube_comercio_adherido:'',
+        // url_whatsapp_comercio_adherido:'',
+        // url_instagram_comercio_adherido:'',
+        // url_web_comercio_adherido:'',
+        // nombre_localidad:'',
+        // nombre_cliente:'',
+        // nombre_categoria:''
+      
     })
 
+
+    const [file, setFile ] = useState();
+    const [open, setOpen ] = useState(false);
+    
+    const saveFile = (e) => {
+      // console.log("e: ",e);
+      setFile(e.target.files[0]);
+      // setFileName(e.target.files[0].name);
+    };
+
+    // const saveFile=e=>{
+    //   setFile(e);
+    // }
     const handleChange=e=>{
       const {name, value}=e.target;
+      
       setComercioSeleccionado(prevState=>({
         ...prevState,
         [name]: value
       }))
-      console.log(comercioSeleccionado);
+      // console.log(comercioSeleccionado);
     }
 
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+
     const seleccionarUsuario=(usuario, caso)=>{
+
       setComercioSeleccionado(usuario);
-      // (caso==='Editar')?null:abrirCerrarModalEliminar()
-      abrirCerrarModalEliminar();
+      //  (caso==='Editar')?abrirCerrarModalEditar():abrirCerrarModalEliminar()
+      //  abrirCerrarModalVerMas()
+       if(caso === 'Editar'){
+        abrirCerrarModalEditar()
+       }else if(caso=== 'Eliminar'){
+        abrirCerrarModalEliminar()
+       }else{
+        abrirCerrarModalVerMas(usuario)
+       }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(async()=>{
+      await getComercioAdherido();
+      await getLocalidad();
+      await getCliente();
+      await getCategoria();    
+        },[])
+
+    async function getLocalidad(){
+      const datos_ = await http.get(baseUrlLocalidad);
+      const {data} = datos_.data;
+      
+      setItems(data);
+    }
+
+    async function getCliente(){
+      const datos_ = await http.get(baseUrlCliente);
+      const {data} = datos_.data;
+      
+      setItemsClientes(data);
+    }
+
+    async function getCategoria(){
+      const datos_ = await http.get(baseUrlCategoria);
+      const {data} = datos_.data;
+      
+      setItemsCategorias(data);
     }
 
     const getComercioAdherido = async()=>{
@@ -87,11 +164,68 @@ const useStyles = makeStyles((theme) => ({
       })
     }
 
+    const getComercioAdheridoId = async(id)=>{
+      await http_.get(baseUrl + id)
+      .then(response=>{
+        const {data:{data}} = response;
+        setDataId(data);
+      })
+    }
+
     const insertComercioAdherido = async()=>{
-      await http_.post(baseUrl, comercioSeleccionado)
+
+      const formData = new FormData();
+      formData.append("detalle_comercio_adherido", file);
+      for(let key in comercioSeleccionado){
+        formData.append(key,comercioSeleccionado[key]);
+      }
+
+      await http_.post(baseUrl, formData)
       .then(response=>{
         setData(data.concat(response.data))
-        abrirCerrarModalInsertar()
+        abrirCerrarModalInsertar();
+        getComercioAdherido();
+        handleClickOpen();
+        // window.alert("Comercio Registrado Correctamente")
+
+      //   <Dialog
+      //   open={open}
+      //   onClose={handleClose}
+      //   aria-labelledby="alert-dialog-title"
+      //   aria-describedby="alert-dialog-description"
+      // >
+      //   <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+      //   <DialogContent>
+      //     <DialogContentText id="alert-dialog-description">
+      //       Let Google help apps determine location. This means sending anonymous location data to
+      //       Google, even when no apps are running.
+      //     </DialogContentText>
+      //   </DialogContent>
+      //   <DialogActions>
+      //     <Button onClick={handleClose} color="primary">
+      //       Disagree
+      //     </Button>
+      //     <Button onClick={handleClose} color="primary" autoFocus>
+      //       Agree
+      //     </Button>
+      //   </DialogActions>
+      // </Dialog>
+      })
+      .catch(error=>{
+        this.setState({ errorMessage: error.message });
+        window.alert("Ha ocurrido un error al registrar el Comercio Adherido")
+
+            console.error('There was an error!', error);
+      });
+    }
+
+    const editComercioAdherido = async()=>{
+      await http_.put(baseUrl + comercioSeleccionado.id_comercio_adherido,comercioSeleccionado)
+      .then(response=>{
+        // setData(data.concat(response.data))
+        setData(data.concat(response.data));
+        abrirCerrarModalEditar();
+        getComercioAdherido();
       })
       .catch(error=>{
         this.setState({ errorMessage: error.message });
@@ -108,6 +242,13 @@ const useStyles = makeStyles((theme) => ({
       })
     }
 
+    const abrirCerrarModalVerMas=(usuario)=>{
+      setModalVerMas(!modalVerMas);
+      if(usuario){
+        getComercioAdheridoId(usuario.id_comercio_adherido);
+      }
+    }
+
     const abrirCerrarModalEliminar=()=>{
       setModalEliminar(!modalEliminar);
     }
@@ -116,53 +257,178 @@ const useStyles = makeStyles((theme) => ({
       setModalInsertar(!modalInsertar);
     }
 
-    const bodyInsertar=(
+    const abrirCerrarModalEditar=()=>{
+      setModalEditar(!modalEditar);
+    }
+
+    const bodyVerMas=(
       <div className={styles.modal}>
-        <h3>Agregar Nuevo Comercio</h3>
-        <TextField name="nombre_comercio_adherido" className={styles.inputMaterial} label="Nombre Comercio Adherido" onChange={handleChange}/>
+        <h3>Más detalles comercio adherido</h3>
+
+        <TextField name="nombre_comercio_adherido" className={styles.inputMaterial} label="Nombre Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.nombre_comercio_adherido
+        ))} disabled="true"/>
         <br />
         
-        <TextField name="descripcion_comercio_adherido" className={styles.inputMaterial} label="Descripción Comercio Adherido" onChange={handleChange}/>
+        <TextField name="descripcion_comercio_adherido" className={styles.inputMaterial} label="Descripción Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.descripcion_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="direccion_comercio_adherido" className={styles.inputMaterial} label="Dirección Comercio Adherido" onChange={handleChange}/>
+        <TextField name="direccion_comercio_adherido" className={styles.inputMaterial} label="Dirección Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.direccion_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="numero_direccion_comercio_adherido" className={styles.inputMaterial} label="Número Dirección Comercio Adherido" onChange={handleChange}/>
+        <TextField name="numero_direccion_comercio_adherido" className={styles.inputMaterial} label="Numero Dirección Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.numero_direccion_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="detalle_comercio_adherido" className={styles.inputMaterial} label="Detalle Comercio Adherido" onChange={handleChange}/>
+        <TextField name="localidad_comercio_adherido" className={styles.inputMaterial} label="Localidad Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.nombre_localidad
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_facebook_comercio_adherido" className={styles.inputMaterial} label="Url Facebook Comercio Adherido" onChange={handleChange}/>
+        <TextField name="cliente_comercio_adherido" className={styles.inputMaterial} label="Cliente Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.nombre_cliente
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
+        <TextField name="categoria_comercio_adherido" className={styles.inputMaterial} label="Categoría Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.nombre_categoria
+        ))} disabled="true"/>
+        <br />
+        <TextField name="url_facebook_comercio_adherido" className={styles.inputMaterial} label="Facebook Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.url_facebook_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
+        <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Twitter Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.url_twitter_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_youtube_comercio_adherido" className={styles.inputMaterial} label="Url Youtube Comercio Adherido" onChange={handleChange}/>
+        <TextField name="url_youtube_comercio_adherido" className={styles.inputMaterial} label="Youtube Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.url_youtube_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_whatsapp_comercio_adherido" className={styles.inputMaterial} label="Url Whatsapp Comercio Adherido" onChange={handleChange}/>
+        <TextField name="url_whatsapp_comercio_adherido" className={styles.inputMaterial} label="Whatsapp Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.url_whatsapp_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_instagram_comercio_adherido" className={styles.inputMaterial} label="Url Instagram Comercio Adherido" onChange={handleChange}/>
+        <TextField name="url_instagram_comercio_adherido" className={styles.inputMaterial} label="Instagram Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.url_instagram_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
+        <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Web Comercio Adherido" onChange={handleChange} value={dataId.map(e=>(
+          e.url_web_comercio_adherido
+        ))} disabled="true"/>
         <br />
 
-        <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
-        <br />
+        <div align="right">
+          <Button onClick={()=>abrirCerrarModalVerMas()}>Aceptar</Button>
+          </div>
+
+      </div>
+    )
+    const bodyInsertar=(
+    <div className={styles.modal}>
+    
+        <h3>Agregar Nuevo Comercio</h3>
+
+              <TextField name="nombre_comercio_adherido" className={styles.inputMaterial} label="Nombre Comercio Adherido" onChange={handleChange}/>
+              <br />
+              
+              <InputLabel className={styles.inputMaterial}>Localidad</InputLabel>
+              <Select
+                    labelId="Localidad"
+                    id="id_localidad"
+                    value={itemSelected}
+                    onChange={handleChange}
+                    className={styles.inputMaterial}
+                    name="id_localidad">
+
+                    {items.map((row, index) => (
+                    <MenuItem key={index} value={row.id_localidad}>
+                      {row.nombre_localidad}
+                    </MenuItem>))}
+              </Select>
+                  <InputLabel className={styles.inputMaterial}>Cliente</InputLabel>
+              <Select
+                    labelId="Cliente"
+                    id="id_cliente"
+                    value={itemSelected}
+                    onChange={handleChange}
+                    className={styles.inputMaterial}
+                    name="id_cliente">
+
+                    {itemsClientes.map((row, index) => (
+                    <MenuItem key={index} value={row.id_cliente}>
+                      {row.nombre_cliente}
+                    </MenuItem>))}
+                  </Select>
+                  <InputLabel className={styles.inputMaterial}>Categoría</InputLabel>
+
+              <Select
+                    labelId="Categoría"
+                    id="categorias"
+                    value={itemSelected}
+                    onChange={handleChange}
+                    className={styles.inputMaterial}
+                    name="categorias">
+
+                    {itemsCategorias.map((row, index) => (
+                    <MenuItem key={index} value={row.id_categoria}>
+                      {row.nombre_categoria}
+                    </MenuItem>))}
+              </Select>
+             
+              <TextField name="descripcion_comercio_adherido" className={styles.inputMaterial} label="Descripción Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="direccion_comercio_adherido" className={styles.inputMaterial} label="Dirección Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="numero_direccion_comercio_adherido" className={styles.inputMaterial} label="Número Dirección Comercio Adherido" onChange={handleChange}/>
+              <br />
+              <InputLabel className={styles.inputMaterial}>Imagen Comercio Adherido</InputLabel>
+
+              <TextField name="detalle_comercio_adherido" className={styles.inputMaterial} label="" onChange={saveFile} type="file"/>
+              
+              <TextField name="url_facebook_comercio_adherido" className={styles.inputMaterial} label="Url Facebook Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_youtube_comercio_adherido" className={styles.inputMaterial} label="Url Youtube Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_whatsapp_comercio_adherido" className={styles.inputMaterial} label="Url Whatsapp Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_instagram_comercio_adherido" className={styles.inputMaterial} label="Url Instagram Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
+              <br />
+
+              <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
+              <br />
+        
         <div align="right">
           <Button color="primary" onClick={()=>insertComercioAdherido()}>Insertar</Button>
           <Button onClick={()=>abrirCerrarModalInsertar()}>Cancelar</Button>
         </div>
       </div>
-    )
+      )
 
     const bodyEliminar=(
       <div className={styles.modal}>
@@ -172,12 +438,104 @@ const useStyles = makeStyles((theme) => ({
           <Button onClick={()=>abrirCerrarModalEliminar()}>No</Button>
         </div>
       </div>
-    )
+      )
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async()=>{
-      await getComercioAdherido();
-        },[])
+    const bodyEditar=(
+      <div className={styles.modal}>
+      
+          <h3>Editar Comercio</h3>
+          <TextField name="nombre_comercio_adherido" className={styles.inputMaterial}  onChange={handleChange} value={comercioSeleccionado.nombre_comercio_adherido}disabled="true"/>
+          <br />
+          <InputLabel className={styles.inputMaterial}>Localidad</InputLabel>
+          <Select
+                labelId="Localidad"
+                id="id_localidad"
+                value={itemSelected}
+                onChange={handleChange}
+                className={styles.inputMaterial}
+                name="id_localidad">
+  
+                {items.map((row, index) => (
+                <MenuItem key={index} value={row.id_localidad}>
+                  {row.nombre_localidad}
+                </MenuItem>))}
+              </Select>
+              <InputLabel className={styles.inputMaterial}>Cliente</InputLabel>
+              <Select
+                labelId="Cliente"
+                id="id_cliente"
+                value={itemSelected}
+                onChange={handleChange}
+                className={styles.inputMaterial}
+                name="id_cliente">
+  
+                {itemsClientes.map((row, index) => (
+                <MenuItem key={index} value={row.id_cliente}>
+                  {row.nombre_cliente}
+                </MenuItem>))}
+              </Select>
+              <InputLabel className={styles.inputMaterial}>Categoría</InputLabel>
+  
+              <Select
+                labelId="Categoría"
+                id="categorias"
+                value={itemSelected}
+                onChange={handleChange}
+                className={styles.inputMaterial}
+                name="categorias">
+  
+                {itemsCategorias.map((row, index) => (
+                <MenuItem key={index} value={row.id_categoria}>
+                  {row.nombre_categoria}
+                </MenuItem>))}
+              </Select>
+          
+          <TextField name="descripcion_comercio_adherido" className={styles.inputMaterial} label="Descripción Comercio Adherido" onChange={handleChange}
+          value={comercioSeleccionado.descripcion_comercio_adherido}/>
+          <br />
+  
+          <TextField name="direccion_comercio_adherido" className={styles.inputMaterial} label="Dirección Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="numero_direccion_comercio_adherido" className={styles.inputMaterial} label="Número Dirección Comercio Adherido" onChange={handleChange}/>
+          <br />
+          <InputLabel className={styles.inputMaterial}>Imagen Comercio Adherido</InputLabel>
+  
+          <TextField name="detalle_comercio_adherido" className={styles.inputMaterial} label="Imagen Comercio Adherido" onChange={handleChange} type="file"/>
+          <br />
+  
+          <TextField name="url_facebook_comercio_adherido" className={styles.inputMaterial} label="Url Facebook Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_youtube_comercio_adherido" className={styles.inputMaterial} label="Url Youtube Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_whatsapp_comercio_adherido" className={styles.inputMaterial} label="Url Whatsapp Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_instagram_comercio_adherido" className={styles.inputMaterial} label="Url Instagram Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
+          <br />
+  
+          <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
+          <br />
+    
+          
+          <div align="right">
+            <Button color="primary" onClick={()=>editComercioAdherido()}>Editar</Button>
+            <Button onClick={()=>abrirCerrarModalEditar()}>Cancelar</Button>
+          </div>
+        </div>
+      )
+    
 return(
 
   <div className="usuarios">
@@ -188,11 +546,12 @@ return(
    <Table>
      <TableHead>
        <TableRow>
-         <TableCell>Id Comercio Adherido</TableCell>
+         
          <TableCell>Nombre Comercio Adherido</TableCell>
          <TableCell>Descripción Comercio Adherido</TableCell>
          <TableCell>Dirección Comercio Adherido</TableCell>
          <TableCell>Número dirección Comercio Adherido</TableCell>
+         <TableCell>Localidad Comercio Adherido</TableCell>
 
 
          <TableCell>Acciones</TableCell>
@@ -202,17 +561,20 @@ return(
      <TableBody>
        {data.map(usuario=>(
          <TableRow key={usuario.id_comercio_adherido}>
-           <TableCell>{usuario.id_comercio_adherido}</TableCell>
+           
            <TableCell>{usuario.nombre_comercio_adherido}</TableCell>
            <TableCell>{usuario.descripcion_comercio_adherido}</TableCell>
            <TableCell>{usuario.direccion_comercio_adherido}</TableCell>
            <TableCell>{usuario.numero_direccion_comercio_adherido}</TableCell>
+           <TableCell>{usuario.nombre_localidad}</TableCell>
 
 
-           {/* <TableCell>{consola.lanzamiento}</TableCell>
-           <TableCell>{consola.unidades_vendidas}</TableCell> */}
            <TableCell>
-             <Edit className={styles.iconos} onClick={console.log("Editar")}/>
+           <Button  className={styles.root} onClick={()=>seleccionarUsuario(usuario,'Ver Mas') }>Ver Más</Button>
+           </TableCell>
+           <TableCell>
+
+             <Edit className={styles.iconos} onClick={()=>seleccionarUsuario(usuario, 'Editar') }/>
              &nbsp;&nbsp;&nbsp;
              <Delete  className={styles.iconos} onClick={()=>seleccionarUsuario(usuario, 'Eliminar')}/>
              </TableCell>
@@ -223,22 +585,50 @@ return(
  </TableContainer>
  
   <Modal
- open={modalInsertar}
- onClose={abrirCerrarModalInsertar}>
+    open={modalInsertar}
+    onClose={abrirCerrarModalInsertar}>
     {bodyInsertar}
  </Modal>
 
- {/* <Modal
- open={modalEditar}
- onClose={abrirCerrarModalEditar}>
+ <Modal
+    open={modalEditar}
+    onClose={abrirCerrarModalEditar}>
     {bodyEditar}
- </Modal> */}
+ </Modal>
 
  <Modal
- open={modalEliminar}
- onClose={abrirCerrarModalEliminar}>
+    open={modalEliminar}
+    onClose={abrirCerrarModalEliminar}>
     {bodyEliminar}
  </Modal> 
+
+ <Modal
+    open={modalVerMas}
+    onClose={abrirCerrarModalVerMas}>
+    {bodyVerMas}
+ </Modal>
+
+ <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+>
+
+<DialogTitle id="alert-dialog-title">{"Comercio Adherido Agregado Correctamente"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          Comercio Adherido Agregado Correctamente
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          
+          <Button onClick={handleClose} color="primary" autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+</Dialog>
+
 </div>
  );
 }
