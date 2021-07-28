@@ -2,43 +2,43 @@
     
     import './../../src/App.css';
     import {makeStyles} from '@material-ui/core/styles';
-    import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal,Button, TextField, Select, MenuItem, FormControl } from '@material-ui/core';
+    import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal,Button, TextField, Select, MenuItem, FormControl, Input } from '@material-ui/core';
     import {Edit, Delete} from '@material-ui/icons';
     import http from "../http-common";
-    import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator'
-    const baseUrl='/usuario/';
-    const urlTipoUsuario='/tipo-usuario/'
-    
-    const useStyles = makeStyles((theme) => ({
-    modal: {
-      position: 'absolute',
-      width: 400,
-      backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)'
-    },
-    iconos:{
-      cursor: 'pointer'
-    }, 
-    inputMaterial:{
-      width: '100%'
-    },
-    root: {
-      background: 'linear-gradient(45deg, #060b26 30%, #060b26 90%)',
-      border: 0,
-      borderRadius: 3,
-      boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-      color: 'white',
-      height: 48,
-      padding: '0 30px',
-    }
-      }));
+    import { useForm, Controller } from 'react-hook-form';
 
-         
+    const baseUrl='/usuario/';
+    const urlTipoUsuario='/tipo-usuario/';
+    
+      const useStyles = makeStyles((theme) => ({
+      modal: {
+        position: 'absolute',
+        width: 400,
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
+      },
+      iconos:{
+        cursor: 'pointer'
+      }, 
+      inputMaterial:{
+        width: '100%'
+      },
+      root: {
+        background: 'linear-gradient(45deg, #060b26 30%, #060b26 90%)',
+        border: 0,
+        borderRadius: 3,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+        color: 'white',
+        height: 48,
+        padding: '0 30px',
+      }
+        }));
+        
       function FormularioUsuario(){
     
         const styles= useStyles();
@@ -47,12 +47,12 @@
         const [items, setItems] = useState([]);
         const [itemSelected, setItemSelected] = useState();
 
-        
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        useEffect(async()=>{
-          await getUser();
-          getTipoUsuario();
-            },[])
+            useEffect(() => {
+              (async () => {
+                getUser();
+              })();
+              getTipoUsuario();
+          }, []);
 
         const [modalEliminar, setModalEliminar] = useState(false);
         const [modalInsertar, setModalInsertar] = useState(false);
@@ -63,8 +63,16 @@
           nombre_usuario: '',
           descripcion_usuario:'',
           pass_usuario:''
-        })
-    
+        });
+
+        const [error, setError] = useState(false);
+
+        const { handleSubmit, control } = useForm();
+
+        const onSubmit = (data) => {
+          console.log("data: ",data);
+        };
+
         const handleChange=e=>{
           const {name, value}=e.target;
           setUsuarioSeleccionado(prevState=>({
@@ -73,10 +81,6 @@
           }))
         }
 
-        const handleSubmit = () => {
-          // your submit logic
-      }
-    
         const seleccionarUsuario=(usuario, caso)=>{
           setUsuarioSeleccionado(usuario);
           // (caso==='Editar')?null:abrirCerrarModalEliminar()
@@ -108,6 +112,7 @@
             this.setState({ errorMessage: error.message });
                 console.error('There was an error!', error);
           });
+        
         }
     
         const deleteUserId = async()=>{
@@ -132,10 +137,54 @@
         const bodyInsertar=(
           <div className={styles.modal}>
             <h3>Agregar Nuevo Usuario</h3>
-            <TextField name="nombre_usuario" className={styles.inputMaterial}     label="Nombre Usuario" onChange={handleChange} required/>
 
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Controller
+                name="nombre_usuario"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  <TextField
+                    label="Nombre Usuario"
+                    variant="standard"
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    helperText={error ? error.message : null}
+                    className={styles.inputMaterial}
+                  />
+                )}
+                rules={{ required: 'Campo Requerido' }}
+              />
+            <Controller
+              name="id_tipo_usuario"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <Select
+              labelId="Tipo Usuario"
+              id="id_tipo_usuario"
+              value={itemSelected}
+              error={!!error}
+              onChange={handleChange}
+              className={styles.inputMaterial}
+              name="id_tipo_usuario">
+
+              {items.map((row, index) => (
+              <MenuItem key={index} value={row.id_tipo_usuario}>
+                {row.nombre_tipo_usuario}
+              </MenuItem>))}
+            </Select>
+              )}
+              rules={{ required: 'Campo Requerido' }}
+            />
+            <div align="right">
+              <Button type="submit" color="primary" onClick={()=>insertUser()}>Insertar</Button>
+              <Button onClick={()=>abrirCerrarModalInsertar()}>Cancelar</Button>
+            </div>
+            </form>
             <br />
-            <Select
+            {/* <Select
               labelId="Tipo Usuario"
               id="id_tipo_usuario"
               value={itemSelected}
@@ -152,11 +201,8 @@
             <TextField name="descripcion_usuario" className={styles.inputMaterial}     label="Descripción Usuario" onChange={handleChange}/>
             <br />
             <TextField name="pass_usuario" className={styles.inputMaterial}     label="Contraseña Usuario" onChange={handleChange} type="password"/>
-            <br /><br />
-            <div align="right">
-              <Button type="submit" color="primary" onClick={()=>insertUser()}>Insertar</Button>
-              <Button onClick={()=>abrirCerrarModalInsertar()}>Cancelar</Button>
-            </div>
+            <br /><br /> */}
+            
           </div>
         )
     
@@ -226,5 +272,5 @@
     </div>
      );
     }
-    
+  
       export default FormularioUsuario;

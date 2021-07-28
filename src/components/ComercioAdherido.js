@@ -87,14 +87,9 @@ const useStyles = makeStyles((theme) => ({
     const [open, setOpen ] = useState(false);
     
     const saveFile = (e) => {
-      // console.log("e: ",e);
       setFile(e.target.files[0]);
-      // setFileName(e.target.files[0].name);
     };
 
-    // const saveFile=e=>{
-    //   setFile(e);
-    // }
     const handleChange=e=>{
       const {name, value}=e.target;
       
@@ -102,7 +97,6 @@ const useStyles = makeStyles((theme) => ({
         ...prevState,
         [name]: value
       }))
-      // console.log(comercioSeleccionado);
     }
 
     const handleClickOpen = () => {
@@ -116,8 +110,7 @@ const useStyles = makeStyles((theme) => ({
     const seleccionarUsuario=(usuario, caso)=>{
 
       setComercioSeleccionado(usuario);
-      //  (caso==='Editar')?abrirCerrarModalEditar():abrirCerrarModalEliminar()
-      //  abrirCerrarModalVerMas()
+
        if(caso === 'Editar'){
         abrirCerrarModalEditar()
        }else if(caso=== 'Eliminar'){
@@ -127,13 +120,14 @@ const useStyles = makeStyles((theme) => ({
        }
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async()=>{
-      await getComercioAdherido();
-      await getLocalidad();
-      await getCliente();
-      await getCategoria();    
-        },[])
+      useEffect(() => {
+          (async () => {
+             getComercioAdherido();
+          })();
+          getLocalidad();
+          getCliente();
+          getCategoria(); 
+      }, []);
 
     async function getLocalidad(){
       const datos_ = await http.get(baseUrlLocalidad);
@@ -186,30 +180,7 @@ const useStyles = makeStyles((theme) => ({
         abrirCerrarModalInsertar();
         getComercioAdherido();
         handleClickOpen();
-        // window.alert("Comercio Registrado Correctamente")
-
-      //   <Dialog
-      //   open={open}
-      //   onClose={handleClose}
-      //   aria-labelledby="alert-dialog-title"
-      //   aria-describedby="alert-dialog-description"
-      // >
-      //   <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
-      //   <DialogContent>
-      //     <DialogContentText id="alert-dialog-description">
-      //       Let Google help apps determine location. This means sending anonymous location data to
-      //       Google, even when no apps are running.
-      //     </DialogContentText>
-      //   </DialogContent>
-      //   <DialogActions>
-      //     <Button onClick={handleClose} color="primary">
-      //       Disagree
-      //     </Button>
-      //     <Button onClick={handleClose} color="primary" autoFocus>
-      //       Agree
-      //     </Button>
-      //   </DialogActions>
-      // </Dialog>
+        
       })
       .catch(error=>{
         this.setState({ errorMessage: error.message });
@@ -397,8 +368,8 @@ const useStyles = makeStyles((theme) => ({
               <br />
               <InputLabel className={styles.inputMaterial}>Imagen Comercio Adherido</InputLabel>
 
-              <TextField name="detalle_comercio_adherido" className={styles.inputMaterial} label="" onChange={saveFile} type="file"/>
-              
+              <TextField name="detalle_comercio_adherido" className={styles.inputMaterial} label="" onChange={saveFile} type="file" accept="image/png,image/jpeg" type="file"/>         
+
               <TextField name="url_facebook_comercio_adherido" className={styles.inputMaterial} label="Url Facebook Comercio Adherido" onChange={handleChange}/>
               <br />
 
@@ -590,11 +561,11 @@ return(
     {bodyInsertar}
  </Modal>
 
- <Modal
+ {/* <Modal
     open={modalEditar}
     onClose={abrirCerrarModalEditar}>
     {bodyEditar}
- </Modal>
+ </Modal> */}
 
  <Modal
     open={modalEliminar}
