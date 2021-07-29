@@ -1,57 +1,32 @@
-    import React, {useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
     
-    import './../../src/App.css';
-    import {makeStyles} from '@material-ui/core/styles';
-    import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal,Button, TextField, Select, MenuItem, FormControl, Input } from '@material-ui/core';
-    import {Edit, Delete} from '@material-ui/icons';
-    import http from "../http-common";
-    import { useForm, Controller } from 'react-hook-form';
+import './../../../src/App.css';
+
+import { Modal,Button, TextField, Select, MenuItem } from '@material-ui/core';
+
+//Context
+import { UserContext } from '../../context/UserContext';
+
+import http from "../common/http-common";
+import { useForm, Controller } from 'react-hook-form';
+import TableUsuario from './TableUsuario';
+
+import { useStyles } from '../css/UsuariosStyles';
 
     const baseUrl='/usuario/';
     const urlTipoUsuario='/tipo-usuario/';
     
-      const useStyles = makeStyles((theme) => ({
-      modal: {
-        position: 'absolute',
-        width: 400,
-        backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
-      },
-      iconos:{
-        cursor: 'pointer'
-      }, 
-      inputMaterial:{
-        width: '100%'
-      },
-      root: {
-        background: 'linear-gradient(45deg, #060b26 30%, #060b26 90%)',
-        border: 0,
-        borderRadius: 3,
-        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-        color: 'white',
-        height: 48,
-        padding: '0 30px',
-      }
-        }));
+      const Usuarios = () => {
+    
+        const styles = useStyles();
         
-      function FormularioUsuario(){
-    
-        const styles= useStyles();
-    
-        const [data, setData] = useState([]);
+        const { data, setData, isLoadingData } = useContext(UserContext);
+        
         const [items, setItems] = useState([]);
         const [itemSelected, setItemSelected] = useState();
 
-            useEffect(() => {
-              (async () => {
-                getUser();
-              })();
-              getTipoUsuario();
+          useEffect(() => {
+            getTipoUsuario();
           }, []);
 
         const [modalEliminar, setModalEliminar] = useState(false);
@@ -87,13 +62,14 @@
           abrirCerrarModalEliminar();
         }
     
-        const getUser = async()=>{
-          await http.get(baseUrl)
-          .then(response=>{
-            const {data:{data}} = response;
-            setData(data);
-          })
-        }
+        // const getUser = async()=>{
+        //   await http.get(baseUrl)
+        //   .then(response=>{
+        //     const {data:{data}} = response;
+        //     setData(data);
+        //     // alert(JSON.stringify(data))
+        //   })
+        // }
     
         async function getTipoUsuario(){
           const datos_ = await http.get(urlTipoUsuario);
@@ -105,24 +81,27 @@
         const insertUser = async()=>{
           await http.post(baseUrl, usuarioSeleccionado)
           .then(response=>{
-            setData(data.concat(response.data))
-            abrirCerrarModalInsertar()
+            setData([...data, data.concat(response.data)]);
+            abrirCerrarModalInsertar();
           })
           .catch(error=>{
-            this.setState({ errorMessage: error.message });
-                console.error('There was an error!', error);
+            console.error({error});
           });
         
         }
     
         const deleteUserId = async()=>{
-          await http.delete(baseUrl + usuarioSeleccionado.id_usuario)
+          try {
+            await http.delete(baseUrl + usuarioSeleccionado.id_usuario)
           .then(response =>{
-            setData(data.filter(usuario=>usuario.id_usuario!==usuarioSeleccionado.    id_usuario));
+            setData(data.filter(usuario=>usuario.id_usuario!==usuarioSeleccionado.id_usuario));
             // console.log("response delete: ",response)
             abrirCerrarModalEliminar();
-            getUser();
+            //getUser();
           })
+          } catch (error) {
+            console.log(error);
+          }
         }
     
         const abrirCerrarModalEliminar=()=>{
@@ -210,7 +189,7 @@
           <div className={styles.modal}>
             <p>Estás seguro que deseas eliminar al usuario <b>{usuarioSeleccionado &&     usuarioSeleccionado.nombre_usuario}</b> ? </p>
             <div align="right">
-              <Button color="secondary" onClick={()=>deleteUserId()} >Sí</Button>
+              <Button color="secondary" onClick={ deleteUserId }>Sí</Button>
               <Button onClick={()=>abrirCerrarModalEliminar()}>No</Button>
             </div>
           </div>
@@ -223,34 +202,8 @@
       <br />
     <Button  className={styles.root} onClick={()=>abrirCerrarModalInsertar()}>Insertar</    Button>
       <br /><br />
-     <TableContainer>
-       <Table>
-         <TableHead>
-           <TableRow>
-             <TableCell>Id Usuario</TableCell>
-             <TableCell>Nombre Usuario</TableCell>
-             <TableCell>Descripción Usuario</TableCell>
-    
-             <TableCell>Acciones</TableCell>
-           </TableRow>
-         </TableHead>
-    
-         <TableBody>
-           {data.map(usuario=>(
-             <TableRow key={usuario.id_usuario}>
-               <TableCell>{usuario.id_usuario}</TableCell>
-               <TableCell>{usuario.nombre_usuario}</TableCell>
-               <TableCell>{usuario.descripcion_usuario}</TableCell>
-               <TableCell>
-                 <Edit className={styles.iconos} onClick={console.log("Editar")}/>
-                 &nbsp;&nbsp;&nbsp;
-                 <Delete  className={styles.iconos} onClick={()=>seleccionarUsuario    (usuario, 'Eliminar')}/>
-                 </TableCell>
-             </TableRow>
-           ))}
-         </TableBody>
-       </Table>
-     </TableContainer>
+
+     <TableUsuario data={data} isLoadingData={isLoadingData} seleccionarUsuario={seleccionarUsuario} />
      
       <Modal
      open={modalInsertar}
@@ -273,4 +226,4 @@
      );
     }
   
-      export default FormularioUsuario;
+      export default Usuarios;
