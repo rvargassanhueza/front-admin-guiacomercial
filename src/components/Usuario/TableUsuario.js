@@ -10,7 +10,7 @@ import {
 
 import ListItemUsuario from "./ListItemUsuario";
 
-const TableUsuario = ({ data, isLoadingData, seleccionarUsuario }) => {
+const TableUsuario = ({ dataUsuarios, isLoadingData, seleccionarUsuario }) => {
   return (
     <TableContainer>
       <Table>
@@ -27,9 +27,9 @@ const TableUsuario = ({ data, isLoadingData, seleccionarUsuario }) => {
           {isLoadingData ? (
             <p>Cargando data ...</p>
           ) : (
-            data.map((usuario) => (
+            dataUsuarios.map((usuario, i) => (
               <ListItemUsuario
-                key={usuario.id_usuario}
+                key={i}
                 usuario={usuario}
                 seleccionarUsuario={seleccionarUsuario}
               />

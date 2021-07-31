@@ -6,7 +6,7 @@ const baseUrl='/usuario/';
 const useFetchUsuario = () => {
 
     const [data, setData] = useState([]);
-    const [isLoadingData, setIsLoadingData] = useState(true)
+    const [isLoadingData, setIsLoadingData] = useState(true);
 
     const getUser = async() => {
         try {
