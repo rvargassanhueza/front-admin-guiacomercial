@@ -4,13 +4,16 @@ import { Edit, Delete } from "@material-ui/icons";
 import { useStyles } from "../css/UsuariosStyles";
 
 const ListItemUsuario = ({ usuario, seleccionarUsuario }) => {
+
+  const { id_usuario, nombre_usuario, descripcion_usuario } = usuario;
+
   const styles = useStyles();
 
   return (
     <TableRow>
-      <TableCell>{usuario.id_usuario}</TableCell>
-      <TableCell>{usuario.nombre_usuario}</TableCell>
-      <TableCell>{usuario.descripcion_usuario}</TableCell>
+      <TableCell>{id_usuario ? id_usuario : '-'} </TableCell>
+      <TableCell>{nombre_usuario}</TableCell>
+      <TableCell>{descripcion_usuario}</TableCell>
       <TableCell>
         <Edit className={styles.iconos} onClick={() => console.log("Editar")} />
         &nbsp;&nbsp;&nbsp;

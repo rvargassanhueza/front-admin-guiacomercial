@@ -16,7 +16,7 @@ const initialState = {
 const UserProvider= ({children}) => {
     const { data, setData, isLoadingData } = useFetchUsuario();
 
-    initialState.dataUsuarios = data;
+    //initialState.dataUsuarios = data;
     const [ state, dispatch ] = useReducer(UserReducer, initialState);
     
     // const eliminarUsuario = (abrirCerrarModalEliminar) => {
@@ -52,6 +52,7 @@ const UserProvider= ({children}) => {
         <UserContext.Provider value={{
             dataUsuarios: state.dataUsuarios,
             usuarioSeleccionado: state.usuario,
+            data,
             setData,
             isLoadingData,
             insertarUsuario,

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Button } from "@material-ui/core";
-import { v4 as uuidv4  } from 'uuid';
+import { parse, v4 as uuidv4  } from 'uuid'; //Opcional
 
 //Formulario
 import { useFormik } from "formik";
@@ -16,7 +16,7 @@ const baseUrl = "/usuario/";
 
 const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
 
-  const { dataUsuarios, setData } = useContext(UserContext);
+  const { data, setData } = useContext(UserContext);
   
   const styles = useStyles();
 
@@ -34,31 +34,26 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
       descripcion_usuario: Yup.string()
                         .required('Descripción es obligatorio')
                         .min(5, 'Descripción minimo de 5 caracteres'),
-      id_tipo_usuario: Yup.number()
+      id_tipo_usuario: Yup.string()
                       .required('Tipo de usuario obligatorio')
     }),
-    onSubmit: values => {
-      console.log('Enviando');
-      console.log(values);
-
+    onSubmit: async values => {
+      insertUser(values);
       const { nombre_usuario, descripcion_usuario, id_tipo_usuario } = values;
       setData([
-        ...dataUsuarios,
+        ...data,
         {
           nombre_usuario,
           descripcion_usuario,
-          id_tipo_usuario,
-          id_usuario: uuidv4(),
-          pass_usuario: 'qwerty'
+          id_tipo_usuario: parseInt(id_tipo_usuario)
         }
       ])
     }
   });
 
-  const insertUser = async () => {
+  const insertUser = async newUser => {
     try {
-      const resp = await http.post(baseUrl, dataUsuarios);
-      setData([...dataUsuarios, {...resp.data}]);
+      await http.post(baseUrl, newUser);
     } catch (error) {
       console.log({error});
     } finally{
@@ -129,7 +124,7 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
           <Button
             type="submit"
             color="primary"
-            onClick={ insertUser }
+            onClick={ () => insertUser }
           >
             Insertar
           </Button>

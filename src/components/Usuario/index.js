@@ -19,7 +19,7 @@ const urlTipoUsuario = "/tipo-usuario/";
 const Usuarios = () => {
 
   const styles = useStyles();
-  const { dataUsuarios, setData, isLoadingData } = useContext(UserContext);
+  const { data, setData, isLoadingData } = useContext(UserContext);
 
   const [items, setItems] = useState([]);
 
@@ -66,7 +66,7 @@ const Usuarios = () => {
         .delete(baseUrl + usuarioSeleccionado.id_usuario)
         .then((response) => {
           setData(
-            dataUsuarios.filter(
+            data.filter(
               (usuario) => usuario.id_usuario !== usuarioSeleccionado.id_usuario
             )
           );
@@ -122,7 +122,7 @@ const Usuarios = () => {
       <br />
 
       <TableUsuario
-        dataUsuarios={dataUsuarios}
+        data={data}
         isLoadingData={isLoadingData}
         seleccionarUsuario={seleccionarUsuario}
       />
