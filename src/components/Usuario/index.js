@@ -13,13 +13,12 @@ import http from "../common/http-common";
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
 
-const baseUrl = "/usuario/";
 const urlTipoUsuario = "/tipo-usuario/";
 
 const Usuarios = () => {
 
   const styles = useStyles();
-  const { data, setData, isLoadingData } = useContext(UserContext);
+  const { dataUsuarios, isLoadingData, usuarioSeleccionado, borrarUsuario } = useContext(UserContext);
 
   const [items, setItems] = useState([]);
 
@@ -30,29 +29,6 @@ const Usuarios = () => {
     getTipoUsuario();
   }, []);
 
-
-  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({
-    id_usuario: "",
-    id_tipo_usuario: "",
-    nombre_usuario: "",
-    descripcion_usuario: "",
-    pass_usuario: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUsuarioSeleccionado((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const seleccionarUsuario = (usuario, caso) => {
-    setUsuarioSeleccionado(usuario);
-    // (caso==='Editar')?null:abrirCerrarModalEliminar()
-    abrirCerrarModalEliminar();
-  };
-
   async function getTipoUsuario() {
     const datos_ = await http.get(urlTipoUsuario);
     const { data } = datos_.data;
@@ -60,24 +36,6 @@ const Usuarios = () => {
     setItems(data);
   }
 
-  const deleteUserId = async () => {
-    try {
-      await http
-        .delete(baseUrl + usuarioSeleccionado.id_usuario)
-        .then((response) => {
-          setData(
-            data.filter(
-              (usuario) => usuario.id_usuario !== usuarioSeleccionado.id_usuario
-            )
-          );
-          // console.log("response delete: ",response)
-          abrirCerrarModalEliminar();
-          //getUser();
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const abrirCerrarModalEliminar = () => {
     setModalEliminar(!modalEliminar);
@@ -101,7 +59,7 @@ const Usuarios = () => {
         <b>{usuarioSeleccionado && usuarioSeleccionado.nombre_usuario}</b> ?{" "}
       </p>
       <div align="right">
-        <Button color="secondary" onClick={deleteUserId}>
+        <Button color="secondary" onClick={() => borrarUsuario(usuarioSeleccionado, abrirCerrarModalEliminar)}>
           Sí
         </Button>
         <Button onClick={() => abrirCerrarModalEliminar()}>No</Button>
@@ -121,11 +79,7 @@ const Usuarios = () => {
       <br />
       <br />
 
-      <TableUsuario
-        data={data}
-        isLoadingData={isLoadingData}
-        seleccionarUsuario={seleccionarUsuario}
-      />
+      <TableUsuario dataUsuarios={dataUsuarios} isLoadingData={isLoadingData} abrirCerrarModalEliminar={abrirCerrarModalEliminar} />
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
         {bodyInsertar}

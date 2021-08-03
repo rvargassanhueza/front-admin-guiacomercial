@@ -1,21 +1,19 @@
 import React, { useContext } from "react";
 import { Button } from "@material-ui/core";
 
-//Formulario
+// Formulario
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
 
-import http from "../common/http-common";
+// Context
 import UserContext from "../../context/usuarios/UserContext";
-
-const baseUrl = "/usuario/";
 
 const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
 
-  const { data, setData } = useContext(UserContext);
+  const { dataUsuarios, setData, insertarUsuario } = useContext(UserContext);
   
   const styles = useStyles();
 
@@ -37,10 +35,10 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
                       .required('Tipo de usuario obligatorio')
     }),
     onSubmit: async values => {
-      insertUser(values);
+      insertarUsuario(values, abrirCerrarModalInsertar);
       const { nombre_usuario, descripcion_usuario, id_tipo_usuario } = values;
       setData([
-        ...data,
+        ...dataUsuarios,
         {
           nombre_usuario,
           descripcion_usuario,
@@ -49,16 +47,6 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
       ])
     }
   });
-
-  const insertUser = async newUser => {
-    try {
-      await http.post(baseUrl, newUser);
-    } catch (error) {
-      console.log({error});
-    } finally{
-      abrirCerrarModalInsertar();
-    }
-  };
 
   return (
     <div className={styles.modal}>
@@ -123,7 +111,7 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
           <Button
             type="submit"
             color="primary"
-            onClick={ () => insertUser }
+            onClick={ () => insertarUsuario }
           >
             Insertar
           </Button>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Table,
   TableContainer,
@@ -9,8 +9,12 @@ import {
 } from "@material-ui/core";
 
 import ListItemUsuario from "./ListItemUsuario";
+import UserContext from "../../context/usuarios/UserContext";
 
-const TableUsuario = ({ data, isLoadingData, seleccionarUsuario }) => {
+const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar }) => {
+
+  const { seleccionarUsuario } = useContext(UserContext);
+
   return (
     <TableContainer>
       <Table>
@@ -27,10 +31,11 @@ const TableUsuario = ({ data, isLoadingData, seleccionarUsuario }) => {
           {isLoadingData ? (
             <p>Cargando data ...</p>
           ) : (
-            data.map((usuario, i) => (
+            dataUsuarios.map((usuario, i) => (
               <ListItemUsuario
                 key={i}
                 usuario={usuario}
+                abrirCerrarModalEliminar={abrirCerrarModalEliminar}
                 seleccionarUsuario={seleccionarUsuario}
               />
             ))

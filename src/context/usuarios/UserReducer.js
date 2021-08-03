@@ -1,11 +1,17 @@
-import { BORRAR_USUARIO, INSERTAR_USUARIO, SELECCIONAR_USUARIO } from '../../types'
+import { INSERTAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, BORRAR_USUARIO,  } from '../../types'
 
 const UserReducer = (state, action) => {
     switch (action.type) {
         case INSERTAR_USUARIO:
             return {
                 ...state,
-                dataUsuarios: action.payload
+                errorUsuario: false
+            }
+        
+        case USUARIO_ERROR:
+            return {
+                ...state,
+                errorUsuario: true
             }
         
         case SELECCIONAR_USUARIO:
@@ -16,7 +22,8 @@ const UserReducer = (state, action) => {
             
         case BORRAR_USUARIO:
             return {
-                dataUsuarios: state.dataUsuarios.filter( item => item.id !== action.payload)
+                ...state,
+                dataUsuarios: state.dataUsuarios.filter( item => item.id_usuario !== action.payload)
             }
         default:
             return state;

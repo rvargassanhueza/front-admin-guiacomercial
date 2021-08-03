@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
 import { Edit, Delete } from "@material-ui/icons";
 import { useStyles } from "../css/UsuariosStyles";
 
-const ListItemUsuario = ({ usuario, seleccionarUsuario }) => {
+const ListItemUsuario = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario }) => {
 
   const { id_usuario, nombre_usuario, descripcion_usuario } = usuario;
 
@@ -17,10 +17,7 @@ const ListItemUsuario = ({ usuario, seleccionarUsuario }) => {
       <TableCell>
         <Edit className={styles.iconos} onClick={() => console.log("Editar")} />
         &nbsp;&nbsp;&nbsp;
-        <Delete
-          className={styles.iconos}
-          onClick={() => seleccionarUsuario(usuario, "Eliminar")}
-        />
+        <Delete className={styles.iconos} onClick={() => seleccionarUsuario(id_usuario, abrirCerrarModalEliminar)} />
       </TableCell>
     </TableRow>
   );
