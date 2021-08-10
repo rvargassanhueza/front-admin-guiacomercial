@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import PropTypes from 'prop-types';
 import {
   Table,
   TableContainer,
@@ -20,7 +21,7 @@ const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar })
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Id Usuario</TableCell>
+            <TableCell>Tipo Usuario</TableCell>
             <TableCell>Nombre Usuario</TableCell>
             <TableCell>Descripción Usuario</TableCell>
             <TableCell>Acciones</TableCell>
@@ -44,6 +45,18 @@ const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar })
       </Table>
     </TableContainer>
   );
+};
+
+TableUsuario.defaultProps = {
+  dataUsuarios: [],
+  isLoadingData: true,
+  abrirCerrarModalEliminar: () => {}
+};
+
+TableUsuario.propTypes = {
+  dataUsuarios: PropTypes.array.isRequired,
+  isLoadingData: PropTypes.bool.isRequired,
+  abrirCerrarModalEliminar: PropTypes.func.isRequired
 };
 
 export default TableUsuario;

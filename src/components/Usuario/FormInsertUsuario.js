@@ -1,20 +1,25 @@
-import React, { useContext } from "react";
-import { Button } from "@material-ui/core";
-
-// Formulario
-import { useFormik } from "formik";
-import * as Yup from "yup";
-
-// Css Global
-import { useStyles } from "../css/UsuariosStyles";
+import React, { useState, useContext } from "react";
+import PropTypes from 'prop-types'
+import { Button, InputAdornment, IconButton, Input } from "@material-ui/core";
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 // Context
 import UserContext from "../../context/usuarios/UserContext";
 
+// Formulario
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import MessageForm from "../MessageForm";
+
+// Css Global
+import { useStyles } from "../css/UsuariosStyles";
+
 const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
 
   const { dataUsuarios, setData, insertarUsuario } = useContext(UserContext);
-  
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const styles = useStyles();
 
   //Inicializacion
@@ -22,7 +27,9 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
     initialValues:{
       nombre_usuario: '',
       id_tipo_usuario: '',
-      descripcion_usuario:''
+      descripcion_usuario: '',
+      pass_usuario: '',
+      repeat_pass_usuario: ''
     },
     validationSchema: Yup.object({
       nombre_usuario: Yup.string()
@@ -31,31 +38,40 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
       descripcion_usuario: Yup.string()
                         .required('Descripción es obligatorio')
                         .min(5, 'Descripción minimo de 5 caracteres'),
+      pass_usuario: Yup.string()
+                      .required('Contraseña es obligatoria'),
+      repeat_pass_usuario: Yup.string()
+                      .required('Repetir contraseña es obligatoria'),
       id_tipo_usuario: Yup.string()
                       .required('Tipo de usuario obligatorio')
     }),
     onSubmit: async values => {
       insertarUsuario(values, abrirCerrarModalInsertar);
-      const { nombre_usuario, descripcion_usuario, id_tipo_usuario } = values;
+      const { nombre_usuario, descripcion_usuario, id_tipo_usuario, pass_usuario } = values;
       setData([
         ...dataUsuarios,
         {
           nombre_usuario,
           descripcion_usuario,
-          id_tipo_usuario: parseInt(id_tipo_usuario)
+          id_tipo_usuario: parseInt(id_tipo_usuario),
+          pass_usuario
         }
       ])
     }
   });
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword ); 
+
+  const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
     <div className={styles.modal}>
       <h3>Agregar Nuevo Usuario</h3>
 
       <form onSubmit={formik.handleSubmit}>
-        <input
+        <Input
           id="nombre_usuario"
-          placeholder="Nombre usuario"
+          placeholder="Nombre"
           value={formik.values.nombre_usuario}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -63,14 +79,15 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
         />
 
         {formik.touched.nombre_usuario && formik.errors.nombre_usuario && (
-          <div>
-            <p style={{ color: "red" }}>{formik.errors.nombre_usuario}</p>
-          </div>
+          <MessageForm
+            message={ formik.errors.nombre_usuario } 
+            style={{ color: 'green', fontSize: 14 }} 
+          />
         )}
 
-        <input
+        <Input
           id="descripcion_usuario"
-          placeholder="Descripcion usuario"
+          placeholder="Descripción"
           value={formik.values.descripcion_usuario}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -78,9 +95,73 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
         />
 
         {formik.touched.descripcion_usuario && formik.errors.descripcion_usuario && (
-          <div>
-            <p style={{ color: "red" }}>{formik.errors.descripcion_usuario}</p>
-          </div>
+          <MessageForm
+            message={ formik.errors.descripcion_usuario } 
+            style={{ color: 'orange', fontSize: 14 }} 
+          />
+        )}
+
+          <Input
+            id="pass_usuario"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Contraseña"
+            value={formik.values.pass_usuario}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className={styles.inputMaterial}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+
+        {formik.touched.pass_usuario && formik.errors.pass_usuario && (
+          <MessageForm
+            message={ formik.errors.pass_usuario } 
+            style={{ color: 'orange', fontSize: 14 }} 
+          />
+        )}
+
+        <Input
+          id="repeat_pass_usuario"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Repetir contraseña"
+          value={formik.values.repeat_pass_usuario}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          className={styles.inputMaterial}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+
+        {formik.touched.repeat_pass_usuario && formik.errors.repeat_pass_usuario && (
+          <MessageForm
+            message={ formik.errors.repeat_pass_usuario } 
+            style={{ color: 'blue', fontSize: 14 }} 
+          />
+        )}
+
+        { formik.values.pass_usuario !== formik.values.repeat_pass_usuario && (
+          <MessageForm
+            message={ "Las contraseñas no son iguales" } 
+            style={{ color: 'peru', fontSize: 14, fontWeight: 'bold' }} 
+          />
         )}
 
         <select
@@ -102,9 +183,9 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
 
 
         {formik.touched.id_tipo_usuario && formik.errors.id_tipo_usuario && (
-          <div>
-            <p style={{ color: "red" }}>{formik.errors.id_tipo_usuario}</p>
-          </div>
+          <MessageForm
+            message={ formik.errors.id_tipo_usuario }  
+          />
         )}
         
         <div align="right">
@@ -120,6 +201,16 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
       </form>
     </div>
   );
+};
+
+FormInsertUsuario.defaultProps = {
+  items: [],
+  abrirCerrarModalInsertar: () => {}
+};
+
+FormInsertUsuario.propTypes = {
+  items: PropTypes.array.isRequired,
+  abrirCerrarModalInsertar: PropTypes.func.isRequired
 };
 
 export default FormInsertUsuario;

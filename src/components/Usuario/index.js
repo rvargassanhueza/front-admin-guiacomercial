@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Modal, Button, TextField, Select, MenuItem } from "@material-ui/core";
+import { Modal, Button } from "@material-ui/core";
 
 //Context
 import UserContext from "../../context/usuarios/UserContext";
@@ -36,14 +36,9 @@ const Usuarios = () => {
     setItems(data);
   }
 
+  const abrirCerrarModalEliminar = () => setModalEliminar(!modalEliminar)
 
-  const abrirCerrarModalEliminar = () => {
-    setModalEliminar(!modalEliminar);
-  };
-
-  const abrirCerrarModalInsertar = () => {
-    setModalInsertar(!modalInsertar);
-  };
+  const abrirCerrarModalInsertar = () => setModalInsertar(!modalInsertar)
 
   const bodyInsertar = ( 
     <FormInsertUsuario  
