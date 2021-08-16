@@ -14,9 +14,9 @@ import MessageForm from "../MessageForm";
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
 
-const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
+const FormEditarUsuario = ({items, abrirCerrarModalEditar}) => {
 
-  const { dataUsuarios, setData, insertarUsuario } = useContext(UserContext);
+  const { editarUsuario, usuarioEditar } = useContext(UserContext);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -25,10 +25,11 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
   //Inicializacion
   const formik = useFormik({
     initialValues:{
-      nombre_usuario: '',
-      id_tipo_usuario: '',
-      descripcion_usuario: '',
-      pass_usuario: '',
+      id_usuario: usuarioEditar.id_usuario,
+      nombre_usuario: usuarioEditar.nombre_usuario,
+      id_tipo_usuario: usuarioEditar.id_tipo_usuario,
+      descripcion_usuario: usuarioEditar.descripcion_usuario,
+      pass_usuario: usuarioEditar.pass_usuario,
       repeat_pass_usuario: ''
     },
     validationSchema: Yup.object({
@@ -45,7 +46,7 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
       id_tipo_usuario: Yup.string()
                       .required('Tipo de usuario obligatorio')
     }),
-    onSubmit: async values => insertarUsuario(values, abrirCerrarModalInsertar)
+    onSubmit: async values => editarUsuario(values, abrirCerrarModalEditar)
   });
 
   const handleClickShowPassword = () => setShowPassword(!showPassword ); 
@@ -54,7 +55,7 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
 
   return (
     <div className={styles.modal}>
-      <h3>Agregar nuevo usuario</h3>
+      <h3>Editar usuario</h3>
 
       <form onSubmit={formik.handleSubmit}>
         <Input
@@ -180,25 +181,25 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
           <Button
             type="submit"
             color="primary"
-            onClick={ () => insertarUsuario }
+            onClick={ () => editarUsuario }
           >
-            Insertar
+            Editar
           </Button>
-          <Button onClick={ abrirCerrarModalInsertar }>Cancelar</Button>
+          <Button onClick={ abrirCerrarModalEditar }>Cancelar</Button>
         </div>
       </form>
     </div>
   );
 };
 
-FormInsertUsuario.defaultProps = {
+FormEditarUsuario.defaultProps = {
   items: [],
-  abrirCerrarModalInsertar: () => {}
+  abrirCerrarModalEditar: () => {}
 };
 
-FormInsertUsuario.propTypes = {
+FormEditarUsuario.propTypes = {
   items: PropTypes.array.isRequired,
-  abrirCerrarModalInsertar: PropTypes.func.isRequired
+  abrirCerrarModalEditar: PropTypes.func.isRequired
 };
 
-export default FormInsertUsuario;
+export default FormEditarUsuario;

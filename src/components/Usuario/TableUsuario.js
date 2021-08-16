@@ -12,7 +12,7 @@ import {
 import ListItemUsuario from "./ListItemUsuario";
 import UserContext from "../../context/usuarios/UserContext";
 
-const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar }) => {
+const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar, abrirCerrarModalEditar }) => {
 
   const { seleccionarUsuario } = useContext(UserContext);
 
@@ -38,6 +38,7 @@ const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar })
                 usuario={usuario}
                 abrirCerrarModalEliminar={abrirCerrarModalEliminar}
                 seleccionarUsuario={seleccionarUsuario}
+                abrirCerrarModalEditar={abrirCerrarModalEditar}
               />
             ))
           )}
@@ -50,13 +51,15 @@ const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar })
 TableUsuario.defaultProps = {
   dataUsuarios: [],
   isLoadingData: true,
-  abrirCerrarModalEliminar: () => {}
+  abrirCerrarModalEliminar: () => {},
+  abrirCerrarModalEditar: () => {}
 };
 
 TableUsuario.propTypes = {
   dataUsuarios: PropTypes.array.isRequired,
   isLoadingData: PropTypes.bool.isRequired,
-  abrirCerrarModalEliminar: PropTypes.func.isRequired
+  abrirCerrarModalEliminar: PropTypes.func.isRequired,
+  abrirCerrarModalEditar: PropTypes.func.isRequired
 };
 
 export default TableUsuario;

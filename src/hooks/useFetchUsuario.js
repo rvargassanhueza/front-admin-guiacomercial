@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
-import http from '../components/common/http-common'
+import http from '../common/http-common'
 
-const baseUrl='/usuario/';
+const useFetchUsuario = (url = '') => {
 
-const useFetchUsuario = () => {
+    let usuariosStorage = JSON.parse(localStorage.getItem('usuarios')) || [];
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(usuariosStorage);
     const [isLoadingData, setIsLoadingData] = useState(true);
+
+    useEffect(() => {
+        localStorage.setItem('usuarios', JSON.stringify(data));
+    }, [data]);
 
     const getUser = async() => {
         try {
-            const resp = await http.get(baseUrl);
+            const resp = await http.get(url);
             const { data } = resp.data;
             setData(data);
             setIsLoadingData(false);
@@ -21,7 +25,7 @@ const useFetchUsuario = () => {
 
     useEffect(() => {
         getUser();
-    }, []);
+    }, [url]);
 
     return {
         data, 

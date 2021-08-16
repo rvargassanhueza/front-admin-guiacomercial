@@ -4,8 +4,8 @@ import './../../../src/App.css';
 import {makeStyles} from '@material-ui/core/styles';
 import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField, Select, MenuItem, InputLabel, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
 import {Edit, Delete} from '@material-ui/icons';
-import http from '../common/http-common'
-import http_ from "../common/http-comercio_adherido"
+import http from '../../common/http-common'
+import http_ from "../../common/http-comercio_adherido"
 
 const baseUrl='/comercioAdherido/';
 const baseUrlLocalidad='/mainData/localidad/';

@@ -6,9 +6,10 @@ import UserContext from "../../context/usuarios/UserContext";
 
 //Components
 import FormInsertUsuario from "./FormInsertUsuario";
+import FormEditarUsuario from "./FormEditarUsuario";
 import TableUsuario from "./TableUsuario";
 
-import http from "../common/http-common";
+import http from "../../common/http-common";
 
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
@@ -24,6 +25,7 @@ const Usuarios = () => {
 
   const [modalEliminar, setModalEliminar] = useState(false);
   const [modalInsertar, setModalInsertar] = useState(false);
+  const [modalEditar, setModalEditar] = useState(false);
 
   useEffect(() => {
     getTipoUsuario();
@@ -37,13 +39,20 @@ const Usuarios = () => {
   }
 
   const abrirCerrarModalEliminar = () => setModalEliminar(!modalEliminar)
-
   const abrirCerrarModalInsertar = () => setModalInsertar(!modalInsertar)
+  const abrirCerrarModalEditar = () => setModalEditar(!modalEditar)
 
   const bodyInsertar = ( 
     <FormInsertUsuario  
       items={items} 
       abrirCerrarModalInsertar={abrirCerrarModalInsertar}
+    />
+  );
+
+  const bodyEditar = ( 
+    <FormEditarUsuario 
+      items={items} 
+      abrirCerrarModalEditar={abrirCerrarModalEditar}
     />
   );
 
@@ -74,21 +83,16 @@ const Usuarios = () => {
       <br />
       <br />
 
-      <TableUsuario dataUsuarios={dataUsuarios} isLoadingData={isLoadingData} abrirCerrarModalEliminar={abrirCerrarModalEliminar} />
+      <TableUsuario 
+        dataUsuarios={dataUsuarios} 
+        isLoadingData={isLoadingData} 
+        abrirCerrarModalEliminar={abrirCerrarModalEliminar} 
+        abrirCerrarModalEditar={abrirCerrarModalEditar}
+      />
 
-      <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
-        {bodyInsertar}
-      </Modal>
-
-      {/* <Modal
-     open={modalEditar}
-     onClose={abrirCerrarModalEditar}>
-        {bodyEditar}
-     </Modal> */}
-
-      <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>
-        {bodyEliminar}
-      </Modal>
+      <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>{bodyInsertar}</Modal>
+      <Modal open={modalEditar} onClose={abrirCerrarModalEditar}>{bodyEditar}</Modal>
+      <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>{bodyEliminar}</Modal>
     </div>
   );
 };

@@ -1,21 +1,20 @@
 import React, { useReducer, useEffect } from 'react'
 import UserContext from './UserContext'
 import UserReducer from './UserReducer'
-import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO } from '../../types'
+import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO, OBTENER_USUARIO_EDITAR } from '../../types'
 import useFetchUsuario from '../../hooks/useFetchUsuario'
-import http from '../../components/common/http-common';
-
-const baseUrl = "/usuario/";
+import http, { BASE_URL_USUARIO } from '../../common/http-common';
 
 //State de usuarios
 const initialState = {
     dataUsuarios: [],
     errorUsuario: false,
-    usuarioSeleccionado: 0
+    usuarioSeleccionado: 0,
+    usuarioEditar: null
 }
 
 const UserProvider= ({children}) => {
-    const { data, setData, isLoadingData } = useFetchUsuario();
+    const { data, setData, isLoadingData } = useFetchUsuario(BASE_URL_USUARIO);
 
     useEffect(() => {
         initialState.dataUsuarios = data;
@@ -25,9 +24,10 @@ const UserProvider= ({children}) => {
     
     const insertarUsuario =  async (newUser, callbackModal) => {
         try {
-            await http.post(baseUrl, newUser);
+            await http.post(BASE_URL_USUARIO, newUser);
             dispatch({
-                type: INSERTAR_USUARIO
+                type: INSERTAR_USUARIO,
+                payload: newUser
             });
         } catch (error) {
             dispatch({
@@ -39,12 +39,12 @@ const UserProvider= ({children}) => {
         }
     }
 
-    const borrarUsuario = async (idUser, callbackModal) => {
+    const editarUsuario =  async (usuario, callbackModal) => {
         try {
-            await http.delete(`${baseUrl}${idUser}`);
+            await http.put(`${BASE_URL_USUARIO}${usuario.id_usuario}`, usuario);
             dispatch({
-                type: BORRAR_USUARIO,
-                payload: idUser
+                type: EDITAR_USUARIO,
+                payload: usuario
             });
         } catch (error) {
             dispatch({
@@ -54,6 +54,30 @@ const UserProvider= ({children}) => {
         } finally{
             callbackModal();
         }
+    }
+
+    const borrarUsuario = async (id, callbackModal) => {
+        try {
+            await http.delete(`${BASE_URL_USUARIO}${id}`);
+            dispatch({
+                type: BORRAR_USUARIO,
+                payload: id
+            });
+        } catch (error) {
+            dispatch({
+                type: USUARIO_ERROR
+            });
+            console.log({error});
+        } finally{
+            callbackModal();
+        }
+    }
+
+    const obtenerUsuarioEditar = usuario => {
+        dispatch({
+            type: OBTENER_USUARIO_EDITAR,
+            payload: usuario
+        })
     }
 
     const seleccionarUsuario = (usuario, callbackModal) => {
@@ -64,17 +88,20 @@ const UserProvider= ({children}) => {
 
         callbackModal();
     }
-    
+
     return (
         <UserContext.Provider value={{
             dataUsuarios: state.dataUsuarios,
             errorUsuario: state.errorUsuario,
             usuarioSeleccionado: state.usuarioSeleccionado,
+            usuarioEditar: state.usuarioEditar,
             setData,
-            isLoadingData, 
+            isLoadingData,
             insertarUsuario,
+            editarUsuario,
             borrarUsuario,
-            seleccionarUsuario
+            seleccionarUsuario,
+            obtenerUsuarioEditar
         }}>
             {children}
         </UserContext.Provider>

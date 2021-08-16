@@ -9,7 +9,7 @@ import SubCategorias from '../pages/SubCategorias';
 import Comercios from '../components/ComercioAdherido';
 import Usuarios from '../components/Usuario';
 import Geograficos from '../pages/Geograficos';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/shared/Navbar';
 
 const RouterDom = () => {
   return (
