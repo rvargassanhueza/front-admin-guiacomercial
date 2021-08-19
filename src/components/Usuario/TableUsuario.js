@@ -12,9 +12,9 @@ import {
 import ListItemUsuario from "./ListItemUsuario";
 import UserContext from "../../context/usuarios/UserContext";
 
-const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar, abrirCerrarModalEditar }) => {
+const TableUsuario = ({isLoadingData, abrirCerrarModalEliminar }) => {
 
-  const { seleccionarUsuario } = useContext(UserContext);
+  const { seleccionarUsuario, dataUsuarios } = useContext(UserContext);
 
   return (
     <TableContainer>
@@ -38,7 +38,6 @@ const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar, a
                 usuario={usuario}
                 abrirCerrarModalEliminar={abrirCerrarModalEliminar}
                 seleccionarUsuario={seleccionarUsuario}
-                abrirCerrarModalEditar={abrirCerrarModalEditar}
               />
             ))
           )}
@@ -49,17 +48,13 @@ const TableUsuario = ({ dataUsuarios, isLoadingData, abrirCerrarModalEliminar, a
 };
 
 TableUsuario.defaultProps = {
-  dataUsuarios: [],
   isLoadingData: true,
-  abrirCerrarModalEliminar: () => {},
-  abrirCerrarModalEditar: () => {}
+  abrirCerrarModalEliminar: () => {}
 };
 
 TableUsuario.propTypes = {
-  dataUsuarios: PropTypes.array.isRequired,
   isLoadingData: PropTypes.bool.isRequired,
-  abrirCerrarModalEliminar: PropTypes.func.isRequired,
-  abrirCerrarModalEditar: PropTypes.func.isRequired
+  abrirCerrarModalEliminar: PropTypes.func.isRequired
 };
 
 export default TableUsuario;

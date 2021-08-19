@@ -11,6 +11,9 @@ import Usuarios from '../components/Usuario';
 import Geograficos from '../pages/Geograficos';
 import Navbar from '../components/shared/Navbar';
 
+//Editar Usuario
+import FormEditarUsuario from '../components/Usuario/FormEditarUsuario';
+
 const RouterDom = () => {
   return (
     <>
@@ -22,6 +25,7 @@ const RouterDom = () => {
           <Route path='/subcategorias' component={SubCategorias} />
           <Route path='/comercios' component={Comercios} />
           <Route path='/usuarios' component={Usuarios} />
+          <Route path="/usuario/editar/:id" component={ FormEditarUsuario } />
           <Route path='/geograficos' component={Geograficos} />
         </Switch>
       </Router>

@@ -45,7 +45,10 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
       id_tipo_usuario: Yup.string()
                       .required('Tipo de usuario obligatorio')
     }),
-    onSubmit: async values => insertarUsuario(values, abrirCerrarModalInsertar)
+    onSubmit: async (values, {resetForm}) => {
+      insertarUsuario(values, abrirCerrarModalInsertar);
+      resetForm();
+    }
   });
 
   const handleClickShowPassword = () => setShowPassword(!showPassword ); 

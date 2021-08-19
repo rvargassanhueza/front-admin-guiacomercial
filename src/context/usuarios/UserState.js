@@ -1,27 +1,47 @@
-import React, { useReducer, useEffect } from 'react'
+import React, { useReducer, useEffect, useState } from 'react'
 import UserContext from './UserContext'
 import UserReducer from './UserReducer'
 import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO, OBTENER_USUARIO_EDITAR } from '../../types'
 import useFetchUsuario from '../../hooks/useFetchUsuario'
-import http, { BASE_URL_USUARIO } from '../../common/http-common';
+import http, { BASE_URL_TIPO_USUARIO, BASE_URL_USUARIO } from '../../common/http-common';
 
 //State de usuarios
-const initialState = {
+let initialState = {
     dataUsuarios: [],
     errorUsuario: false,
     usuarioSeleccionado: 0,
-    usuarioEditar: null
+    usuarioEditar: null,
+    usuarioEditadoPorId:{}
 }
 
 const UserProvider= ({children}) => {
+    const [items, setItems] = useState([]);
+    const [guardarUsuarioID, setGuardarUsuarioID] = useState({});
+    const [isLoadingUsuarioID, setIsLoadingUsuarioID] = useState(true);
     const { data, setData, isLoadingData } = useFetchUsuario(BASE_URL_USUARIO);
 
     useEffect(() => {
         initialState.dataUsuarios = data;
     }, [data]);
 
+    useEffect(() => {
+        getTipoUsuario();
+    }, []);
+
     const [ state, dispatch ] = useReducer(UserReducer, initialState);
-    
+
+    const getTipoUsuario = async () => {
+        try {
+            const datos_ = await http.get(BASE_URL_TIPO_USUARIO);
+            const { data } = datos_.data;
+        
+            setItems(data);
+            
+        } catch (error) {
+            console.log({error})
+        }
+    }
+
     const insertarUsuario =  async (newUser, callbackModal) => {
         try {
             await http.post(BASE_URL_USUARIO, newUser);
@@ -39,7 +59,7 @@ const UserProvider= ({children}) => {
         }
     }
 
-    const editarUsuario =  async (usuario, callbackModal) => {
+    const editarUsuario =  async (usuario) => {
         try {
             await http.put(`${BASE_URL_USUARIO}${usuario.id_usuario}`, usuario);
             dispatch({
@@ -51,9 +71,7 @@ const UserProvider= ({children}) => {
                 type: USUARIO_ERROR
             });
             console.log({error});
-        } finally{
-            callbackModal();
-        }
+        } 
     }
 
     const borrarUsuario = async (id, callbackModal) => {
@@ -89,14 +107,35 @@ const UserProvider= ({children}) => {
         callbackModal();
     }
 
+    const getUsuarioByID = async id => {
+        try {
+            const res = await fetch(`http://localhost:3002/v1${BASE_URL_USUARIO}${id}`);
+            const { data } = await res.json();
+            setGuardarUsuarioID(data[0]);
+            dispatch({
+                type: 'getid',
+                payload: data[0]
+            })
+            setIsLoadingUsuarioID(false);
+            
+        } catch (error) {
+            console.log('error', error)
+        }
+    }
     return (
         <UserContext.Provider value={{
+            usuarioEditadoPorId: state.usuarioEditadoPorId,
+            setGuardarUsuarioID,
+            guardarUsuarioID,
+            items,
             dataUsuarios: state.dataUsuarios,
             errorUsuario: state.errorUsuario,
             usuarioSeleccionado: state.usuarioSeleccionado,
             usuarioEditar: state.usuarioEditar,
             setData,
             isLoadingData,
+            isLoadingUsuarioID,
+            getUsuarioByID,
             insertarUsuario,
             editarUsuario,
             borrarUsuario,

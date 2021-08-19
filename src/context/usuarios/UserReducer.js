@@ -5,7 +5,7 @@ const UserReducer = (state, action) => {
         case INSERTAR_USUARIO:
             return {
                 ...state,
-                dataUsuarios:[...state.productos, action.payload]
+                dataUsuarios:[...state.dataUsuarios, action.payload]
             }
         
         case USUARIO_ERROR:
@@ -37,6 +37,11 @@ const UserReducer = (state, action) => {
             return {
                 ...state,
                 usuarioEditar: action.payload
+            }
+        case 'getid':
+            return{
+                ...state,
+                usuarioEditadoPorId: action.payload
             }
         default:
             return state;
