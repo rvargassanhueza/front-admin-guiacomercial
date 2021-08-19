@@ -12,18 +12,17 @@ const useFetchUsuario = (url = '') => {
         localStorage.setItem('usuarios', JSON.stringify(data));
     }, [data]);
 
-    const getUser = async() => {
-        try {
-            const resp = await http.get(url);
-            const { data } = resp.data;
-            setData(data);
-            setIsLoadingData(false);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     useEffect(() => {
+        const getUser = async() => {
+            try {
+                const resp = await http.get(url);
+                const { data } = resp.data;
+                setData(data);
+                setIsLoadingData(false);
+            } catch (error) {
+                console.log(error);
+            }
+        }
         getUser();
     }, [url]);
 

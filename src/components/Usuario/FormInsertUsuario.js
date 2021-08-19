@@ -14,9 +14,9 @@ import MessageForm from "../MessageForm";
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
 
-const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
+const FormInsertUsuario = ({abrirCerrarModalInsertar}) => {
 
-  const { dataUsuarios, setData, insertarUsuario } = useContext(UserContext);
+  const { insertarUsuario, items } = useContext(UserContext);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -195,12 +195,10 @@ const FormInsertUsuario = ({items, abrirCerrarModalInsertar}) => {
 };
 
 FormInsertUsuario.defaultProps = {
-  items: [],
   abrirCerrarModalInsertar: () => {}
 };
 
 FormInsertUsuario.propTypes = {
-  items: PropTypes.array.isRequired,
   abrirCerrarModalInsertar: PropTypes.func.isRequired
 };
 

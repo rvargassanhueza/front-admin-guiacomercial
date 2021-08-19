@@ -29,9 +29,7 @@ const TableUsuario = ({isLoadingData, abrirCerrarModalEliminar }) => {
         </TableHead>
 
         <TableBody>
-          {isLoadingData ? (
-            <p>Cargando data ...</p>
-          ) : (
+          {!isLoadingData && (
             dataUsuarios.map((usuario, i) => (
               <ListItemUsuario
                 key={i}

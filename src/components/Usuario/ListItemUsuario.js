@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { TableCell, TableRow } from "@material-ui/core";
-import { Edit, Delete } from "@material-ui/icons";
+import { Delete } from "@material-ui/icons";
 import { useStyles } from "../css/UsuariosStyles";
-import UserContext from "../../context/usuarios/UserContext";
 
 const ListItemUsuario = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario }) => {
 
@@ -17,10 +16,7 @@ const ListItemUsuario = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario
       <TableCell>{nombre_usuario}</TableCell>
       <TableCell>{descripcion_usuario}</TableCell>
       <TableCell>
-        {/* <Edit className={styles.iconos} onClick={() => editar(usuario)} /> */}
         <Link to={`/usuario/editar/${id_usuario}`} className={styles.iconos}>
-        {/* <Link to={{pathname: `/${this.props.testvalue}`, query: {backUrl}}} /> */}
-        {/* <Link to={{pathname:`/usuario/editar/${id_usuario}`, query:{ abrirCerrarModalEditar }}} ></Link> */}
           Editar
         </Link>
         &nbsp;&nbsp;&nbsp;

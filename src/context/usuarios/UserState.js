@@ -1,7 +1,7 @@
-import React, { useReducer, useEffect, useState } from 'react'
+import React, { useReducer, useEffect, useState, useRef } from 'react'
 import UserContext from './UserContext'
 import UserReducer from './UserReducer'
-import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO, OBTENER_USUARIO_EDITAR } from '../../types'
+import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types'
 import useFetchUsuario from '../../hooks/useFetchUsuario'
 import http, { BASE_URL_TIPO_USUARIO, BASE_URL_USUARIO } from '../../common/http-common';
 
@@ -9,14 +9,12 @@ import http, { BASE_URL_TIPO_USUARIO, BASE_URL_USUARIO } from '../../common/http
 let initialState = {
     dataUsuarios: [],
     errorUsuario: false,
-    usuarioSeleccionado: 0,
-    usuarioEditar: null,
-    usuarioEditadoPorId:{}
+    usuarioSeleccionado: 0
 }
 
 const UserProvider= ({children}) => {
     const [items, setItems] = useState([]);
-    const [guardarUsuarioID, setGuardarUsuarioID] = useState({});
+    const miUsuarioByID = useRef({});
     const [isLoadingUsuarioID, setIsLoadingUsuarioID] = useState(true);
     const { data, setData, isLoadingData } = useFetchUsuario(BASE_URL_USUARIO);
 
@@ -59,7 +57,7 @@ const UserProvider= ({children}) => {
         }
     }
 
-    const editarUsuario =  async (usuario) => {
+    const editarUsuario =  async usuario => {
         try {
             await http.put(`${BASE_URL_USUARIO}${usuario.id_usuario}`, usuario);
             dispatch({
@@ -91,13 +89,6 @@ const UserProvider= ({children}) => {
         }
     }
 
-    const obtenerUsuarioEditar = usuario => {
-        dispatch({
-            type: OBTENER_USUARIO_EDITAR,
-            payload: usuario
-        })
-    }
-
     const seleccionarUsuario = (usuario, callbackModal) => {
         dispatch({
             type: SELECCIONAR_USUARIO,
@@ -109,13 +100,9 @@ const UserProvider= ({children}) => {
 
     const getUsuarioByID = async id => {
         try {
-            const res = await fetch(`http://localhost:3002/v1${BASE_URL_USUARIO}${id}`);
-            const { data } = await res.json();
-            setGuardarUsuarioID(data[0]);
-            dispatch({
-                type: 'getid',
-                payload: data[0]
-            })
+            const resp = await http.get(`${BASE_URL_USUARIO}${id}`);
+            const { data } = resp.data;
+            miUsuarioByID.current = data[0];
             setIsLoadingUsuarioID(false);
             
         } catch (error) {
@@ -124,14 +111,11 @@ const UserProvider= ({children}) => {
     }
     return (
         <UserContext.Provider value={{
-            usuarioEditadoPorId: state.usuarioEditadoPorId,
-            setGuardarUsuarioID,
-            guardarUsuarioID,
-            items,
             dataUsuarios: state.dataUsuarios,
             errorUsuario: state.errorUsuario,
             usuarioSeleccionado: state.usuarioSeleccionado,
-            usuarioEditar: state.usuarioEditar,
+            miUsuarioByID,
+            items,
             setData,
             isLoadingData,
             isLoadingUsuarioID,
@@ -140,7 +124,6 @@ const UserProvider= ({children}) => {
             editarUsuario,
             borrarUsuario,
             seleccionarUsuario,
-            obtenerUsuarioEditar
         }}>
             {children}
         </UserContext.Provider>

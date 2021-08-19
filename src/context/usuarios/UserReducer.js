@@ -1,4 +1,4 @@
-import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO, OBTENER_USUARIO_EDITAR } from '../../types'
+import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types'
 
 const UserReducer = (state, action) => {
     switch (action.type) {
@@ -32,16 +32,6 @@ const UserReducer = (state, action) => {
                 dataUsuarios: state.dataUsuarios.map( item => 
                     item.id_usuario === action.payload.id_usuario ? item = action.payload : item
                 )
-            }
-        case OBTENER_USUARIO_EDITAR:
-            return {
-                ...state,
-                usuarioEditar: action.payload
-            }
-        case 'getid':
-            return{
-                ...state,
-                usuarioEditadoPorId: action.payload
             }
         default:
             return state;

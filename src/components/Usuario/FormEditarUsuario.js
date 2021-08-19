@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button, InputAdornment, IconButton, Input } from "@material-ui/core";
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 
@@ -7,7 +7,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import UserContext from "../../context/usuarios/UserContext";
 
 // Formulario
-import { useFormik, Formik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import MessageForm from "../MessageForm";
 
@@ -16,28 +16,25 @@ import { useStyles } from "../css/UsuariosStyles";
 
 const FormEditarUsuario = ({history}) => {
   const styles = useStyles();
-  //Obtengo el id de la URL
   const { id } = useParams();
 
-  
-  const { items, editarUsuario, getUsuarioByID, guardarUsuarioID, isLoadingUsuarioID } = useContext(UserContext);
+  const { items, editarUsuario, getUsuarioByID, isLoadingUsuarioID, miUsuarioByID} = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
       getUsuarioByID(id);
-  }, [id])
-
-  console.log({guardarUsuarioID})
+  }, [id]);
 
   //Inicializacion
   const formik = useFormik({
+    enableReinitialize:true,
     initialValues : {
-      id_usuario: id,
-      nombre_usuario: !isLoadingUsuarioID ? guardarUsuarioID.nombre_usuario : 'cargando ...',
-      id_tipo_usuario: '',
-      descripcion_usuario: '',
-      pass_usuario: '',
-      repeat_pass_usuario: ''
+      id_usuario: miUsuarioByID.current.id_usuario,
+      nombre_usuario : miUsuarioByID.current.nombre_usuario,
+      id_tipo_usuario: miUsuarioByID.current.id_tipo_usuario,
+      descripcion_usuario: miUsuarioByID.current.descripcion_usuario,
+      pass_usuario: miUsuarioByID.current.pass_usuario,
+      repeat_pass_usuario: miUsuarioByID.current.pass_usuario
     },
     validationSchema: Yup.object({
       nombre_usuario: Yup.string()
@@ -50,16 +47,17 @@ const FormEditarUsuario = ({history}) => {
                       .required('Contraseña es obligatoria'),
       repeat_pass_usuario: Yup.string()
                       .required('Repetir contraseña es obligatoria'),
-      id_tipo_usuario: Yup.string()
+      id_tipo_usuario: Yup.number()
                       .required('Tipo de usuario obligatorio')
     }),
-    onSubmit: async (values, { resetForm }) => { 
+    onSubmit: async (values, {resetForm}) => { 
       editarUsuario(values);
-      resetForm();
       setTimeout(() => {
+        resetForm();
         history.push('/usuarios');
       }, 1000);
-    } 
+      
+    }
   });
 
   const handleClickShowPassword = () => setShowPassword(!showPassword ); 
@@ -68,6 +66,8 @@ const FormEditarUsuario = ({history}) => {
 
   return (
     <>
+    {
+      !isLoadingUsuarioID ? (
           <div className={styles.modal}>
             <h3>Editar usuario</h3>
 
@@ -75,11 +75,10 @@ const FormEditarUsuario = ({history}) => {
               <Input
                 id="nombre_usuario"
                 placeholder="Nombre"
-                value={ formik.values.nombre_usuario || 'dasdasdasdasd' }
+                value={ formik.values.nombre_usuario || '' }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className={styles.inputMaterial}
-                error={formik.touched.nombre_usuario && formik.errors.nombre_usuario}
               />
 
               {formik.touched.nombre_usuario && formik.errors.nombre_usuario && (
@@ -92,7 +91,7 @@ const FormEditarUsuario = ({history}) => {
               <Input
                 id="descripcion_usuario"
                 placeholder="Descripción"
-                value={ formik.values.descripcion_usuario }
+                value={ formik.values.descripcion_usuario || ''}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className={styles.inputMaterial}
@@ -109,7 +108,7 @@ const FormEditarUsuario = ({history}) => {
                   id="pass_usuario"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Contraseña"
-                  value={ formik.values.pass_usuario }
+                  value={ formik.values.pass_usuario || '' }
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className={styles.inputMaterial}
@@ -137,7 +136,7 @@ const FormEditarUsuario = ({history}) => {
                 id="repeat_pass_usuario"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Repetir contraseña"
-                value={ formik.values.repeat_pass_usuario }
+                value={ formik.values.repeat_pass_usuario || '' }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className={styles.inputMaterial}
@@ -170,7 +169,7 @@ const FormEditarUsuario = ({history}) => {
 
               <select
                 id="id_tipo_usuario"
-                value={formik.values.id_tipo_usuario}
+                value={formik.values.id_tipo_usuario || 0}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className={styles.inputMaterial}
@@ -200,10 +199,16 @@ const FormEditarUsuario = ({history}) => {
                 >
                   Editar
                 </Button>
-                <Link to={"/usuarios"}>Cancelar</Link>
+                <Button
+                  color="secondary"
+                  onClick={ () => history.push('/usuarios') }
+                >
+                  Cancelar
+                </Button>
               </div>
             </form>
-          </div>
+          </div>) : (<p>Cargando ...</p>)
+      }
     </>
   );
 };

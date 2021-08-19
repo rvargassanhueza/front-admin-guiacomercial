@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Modal, Button } from "@material-ui/core";
 
 //Context
@@ -6,10 +6,7 @@ import UserContext from "../../context/usuarios/UserContext";
 
 //Components
 import FormInsertUsuario from "./FormInsertUsuario";
-import FormEditarUsuario from "./FormEditarUsuario";
 import TableUsuario from "./TableUsuario";
-
-import http, { BASE_URL_TIPO_USUARIO } from "../../common/http-common";
 
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
@@ -17,7 +14,7 @@ import { useStyles } from "../css/UsuariosStyles";
 const Usuarios = () => {
 
   const styles = useStyles();
-  const { items, isLoadingData, usuarioSeleccionado, borrarUsuario } = useContext(UserContext);
+  const { isLoadingData, usuarioSeleccionado, borrarUsuario } = useContext(UserContext);
 
   const [modalEliminar, setModalEliminar] = useState(false);
   const [modalInsertar, setModalInsertar] = useState(false);
@@ -27,7 +24,6 @@ const Usuarios = () => {
 
   const bodyInsertar = ( 
     <FormInsertUsuario  
-      items={items} 
       abrirCerrarModalInsertar={abrirCerrarModalInsertar}
     />
   );
