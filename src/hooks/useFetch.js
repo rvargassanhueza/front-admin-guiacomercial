@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import http from '../common/http-common'
 
-const useFetchUsuario = (url = '') => {
+export const useFetch = url => {
 
     let usuariosStorage = JSON.parse(localStorage.getItem('usuarios')) || [];
 
@@ -27,10 +27,7 @@ const useFetchUsuario = (url = '') => {
     }, [url]);
 
     return {
-        data, 
-        setData,
+        data,
         isLoadingData
     }
 }
-
-export default useFetchUsuario

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 
-import ListItemUsuario from "./ListItemUsuario";
+import Usuarios from "./Usuarios";
 import UserContext from "../../context/usuarios/UserContext";
 
 const TableUsuario = ({isLoadingData, abrirCerrarModalEliminar }) => {
@@ -29,16 +29,16 @@ const TableUsuario = ({isLoadingData, abrirCerrarModalEliminar }) => {
         </TableHead>
 
         <TableBody>
-          {!isLoadingData && (
+          {!isLoadingData ? (
             dataUsuarios.map((usuario, i) => (
-              <ListItemUsuario
+              <Usuarios
                 key={i}
                 usuario={usuario}
                 abrirCerrarModalEliminar={abrirCerrarModalEliminar}
                 seleccionarUsuario={seleccionarUsuario}
               />
             ))
-          )}
+          ):(<p>Cargando...</p>)}
         </TableBody>
       </Table>
     </TableContainer>

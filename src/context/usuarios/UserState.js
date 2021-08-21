@@ -1,8 +1,9 @@
-import React, { useReducer, useEffect, useState, useRef } from 'react'
+import React, { useReducer, useEffect, useState } from 'react'
 import UserContext from './UserContext'
 import UserReducer from './UserReducer'
+import { useFetch } from '../../hooks/useFetch';
+
 import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types'
-import useFetchUsuario from '../../hooks/useFetchUsuario'
 import http, { BASE_URL_TIPO_USUARIO, BASE_URL_USUARIO } from '../../common/http-common';
 
 //State de usuarios
@@ -14,9 +15,9 @@ let initialState = {
 
 const UserProvider= ({children}) => {
     const [items, setItems] = useState([]);
-    const miUsuarioByID = useRef({});
+    const [usuarioDetail, setUsuarioDetail] = useState({});
     const [isLoadingUsuarioID, setIsLoadingUsuarioID] = useState(true);
-    const { data, setData, isLoadingData } = useFetchUsuario(BASE_URL_USUARIO);
+    const { data, isLoadingData } = useFetch(BASE_URL_USUARIO);
 
     useEffect(() => {
         initialState.dataUsuarios = data;
@@ -102,9 +103,9 @@ const UserProvider= ({children}) => {
         try {
             const resp = await http.get(`${BASE_URL_USUARIO}${id}`);
             const { data } = resp.data;
-            miUsuarioByID.current = data[0];
+            const dataFinal = !!data && data[0];
+            setUsuarioDetail(dataFinal);
             setIsLoadingUsuarioID(false);
-            
         } catch (error) {
             console.log('error', error)
         }
@@ -114,9 +115,8 @@ const UserProvider= ({children}) => {
             dataUsuarios: state.dataUsuarios,
             errorUsuario: state.errorUsuario,
             usuarioSeleccionado: state.usuarioSeleccionado,
-            miUsuarioByID,
             items,
-            setData,
+            usuarioDetail,
             isLoadingData,
             isLoadingUsuarioID,
             getUsuarioByID,

@@ -10,7 +10,7 @@ const MessageForm = ({ message='', style={} }) => {
 }
 
 MessageForm.defaultProps = {
-    message: 'Hola soy la descripción de un usuario',
+    message: 'Mensaje de error',
     style: { color: 'red', fontSize: 14 }
 };
 

@@ -13,8 +13,9 @@ import MessageForm from "../MessageForm";
 
 // Css Global
 import { useStyles } from "../css/UsuariosStyles";
+import ContainerModal from "../Container";
 
-const FormInsertUsuario = ({abrirCerrarModalInsertar}) => {
+const InsertarUsuario = ({abrirCerrarModalInsertar}) => {
 
   const { insertarUsuario, items } = useContext(UserContext);
 
@@ -56,7 +57,7 @@ const FormInsertUsuario = ({abrirCerrarModalInsertar}) => {
   const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
-    <div className={styles.modal}>
+    <ContainerModal>
       <h3>Agregar nuevo usuario</h3>
 
       <form onSubmit={formik.handleSubmit}>
@@ -190,16 +191,16 @@ const FormInsertUsuario = ({abrirCerrarModalInsertar}) => {
           <Button onClick={ abrirCerrarModalInsertar }>Cancelar</Button>
         </div>
       </form>
-    </div>
+    </ContainerModal>
   );
 };
 
-FormInsertUsuario.defaultProps = {
+InsertarUsuario.defaultProps = {
   abrirCerrarModalInsertar: () => {}
 };
 
-FormInsertUsuario.propTypes = {
+InsertarUsuario.propTypes = {
   abrirCerrarModalInsertar: PropTypes.func.isRequired
 };
 
-export default FormInsertUsuario;
+export default InsertarUsuario;

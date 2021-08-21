@@ -1,19 +1,21 @@
 import React, { useContext, useState } from "react";
 import { Modal, Button } from "@material-ui/core";
 
+// Css Global
+import ContainerModal from "../Container";
+import { useStyles } from "../css/UsuariosStyles";
+
 //Context
 import UserContext from "../../context/usuarios/UserContext";
 
 //Components
-import FormInsertUsuario from "./FormInsertUsuario";
+import InsertarUsuario from "./InsertarUsuario";
 import TableUsuario from "./TableUsuario";
 
-// Css Global
-import { useStyles } from "../css/UsuariosStyles";
-
-const Usuarios = () => {
+const MainUsuarios = () => {
 
   const styles = useStyles();
+
   const { isLoadingData, usuarioSeleccionado, borrarUsuario } = useContext(UserContext);
 
   const [modalEliminar, setModalEliminar] = useState(false);
@@ -23,13 +25,13 @@ const Usuarios = () => {
   const abrirCerrarModalInsertar = () => setModalInsertar(!modalInsertar)
 
   const bodyInsertar = ( 
-    <FormInsertUsuario  
+    <InsertarUsuario  
       abrirCerrarModalInsertar={abrirCerrarModalInsertar}
     />
   );
 
   const bodyEliminar = (
-    <div className={styles.modal}>
+    <ContainerModal>
       <p>
         Estás seguro que deseas eliminar al usuario{" "}
         <b>{usuarioSeleccionado && usuarioSeleccionado.nombre_usuario}</b> ?{" "}
@@ -40,7 +42,7 @@ const Usuarios = () => {
         </Button>
         <Button onClick={() => abrirCerrarModalEliminar()}>No</Button>
       </div>
-    </div>
+    </ContainerModal>
   );
 
   return (
@@ -66,4 +68,4 @@ const Usuarios = () => {
   );
 };
 
-export default Usuarios;
+export default MainUsuarios;

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
 import Home from '../pages/Home';
 import Categorias from '../pages/Categorias';
@@ -12,7 +12,7 @@ import Geograficos from '../pages/Geograficos';
 import Navbar from '../components/shared/Navbar';
 
 //Editar Usuario
-import FormEditarUsuario from '../components/Usuario/FormEditarUsuario';
+import EditarUsuario from '../components/Usuario/EditarUsuario';
 
 const RouterDom = () => {
   return (
@@ -21,12 +21,13 @@ const RouterDom = () => {
         <Navbar />
         <Switch>
           <Route path='/' exact component={Home} />
-          <Route path='/categorias' component={Categorias} />
-          <Route path='/subcategorias' component={SubCategorias} />
-          <Route path='/comercios' component={Comercios} />
-          <Route path='/usuarios' component={Usuarios} />
-          <Route path="/usuario/editar/:id" component={ FormEditarUsuario } />
-          <Route path='/geograficos' component={Geograficos} />
+          <Route path='/categorias' exact component={Categorias} />
+          <Route path='/subcategorias' exact component={SubCategorias} />
+          <Route path='/comercios' exact component={Comercios} />
+          <Route path='/usuarios' exact component={Usuarios} />
+          <Route path="/usuario/editar/:id" exact component={ EditarUsuario } />
+          <Route path='/geograficos' exact component={Geograficos} />
+          <Redirect to="/" />
         </Switch>
       </Router>
     </>

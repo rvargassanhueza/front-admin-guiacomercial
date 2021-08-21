@@ -5,7 +5,7 @@ import { TableCell, TableRow } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 import { useStyles } from "../css/UsuariosStyles";
 
-const ListItemUsuario = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario }) => {
+const Usuarios = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario }) => {
 
   const { id_usuario, nombre_tipo_usuario, nombre_usuario, descripcion_usuario } = usuario;
   const styles = useStyles();
@@ -26,16 +26,16 @@ const ListItemUsuario = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario
   );
 };
 
-ListItemUsuario.defaultProps = {
+Usuarios.defaultProps = {
   usuario: {},
   abrirCerrarModalEliminar: () => {},
   seleccionarUsuario: () => {},
 };
 
-ListItemUsuario.propTypes = {
+Usuarios.propTypes = {
   usuario: PropTypes.object.isRequired,
   abrirCerrarModalEliminar: PropTypes.func.isRequired,
   seleccionarUsuario: PropTypes.func.isRequired
 };
 
-export default ListItemUsuario;
+export default Usuarios;
