@@ -48,6 +48,7 @@ const EditarUsuario = ({history}) => {
   const [ formValues, handleInputChange, setFormState, handleResetForm ] = useForm({
     id_usuario: 0,
     id_tipo_usuario: 0,
+    nombre_tipo_usuario: '',
     nombre_usuario: '',
     descripcion_usuario: '',
     pass_usuario: '',
@@ -65,6 +66,7 @@ const EditarUsuario = ({history}) => {
       setFormState({
         id_usuario: usuarioDetail.id_usuario || 0,
         id_tipo_usuario: usuarioDetail.id_tipo_usuario || 0,
+        nombre_tipo_usuario: usuarioDetail.nombre_tipo_usuario || 'Cargando ...',
         nombre_usuario: usuarioDetail.nombre_usuario || 'Cargando nombre',
         descripcion_usuario: usuarioDetail.descripcion_usuario || 'Cargando descripción',
         pass_usuario: usuarioDetail.pass_usuario || 'Cargando password',
