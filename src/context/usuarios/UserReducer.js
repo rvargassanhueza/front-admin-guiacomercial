@@ -1,4 +1,4 @@
-import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types'
+import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types/usuarios'
 
 const UserReducer = (state, action) => {
     switch (action.type) {

@@ -89,7 +89,7 @@ import EliminarComercio from './EliminarComercio';
 
       useEffect(() => {
           (async () => {
-             getComercioAdherido();
+             //getComercioAdherido();
           })();
           getLocalidad();
           getCliente();
@@ -117,14 +117,6 @@ import EliminarComercio from './EliminarComercio';
       setItemsCategorias(data);
     }
 
-    const getComercioAdherido = async()=>{
-      await http_.get(baseUrl)
-      .then(response=>{
-        const {data:{data}} = response;
-        setData(data);
-      })
-    }
-
     const getComercioAdheridoId = async(id)=>{
       await http_.get(baseUrl + id)
       .then(response=>{
@@ -145,7 +137,7 @@ import EliminarComercio from './EliminarComercio';
       .then(response=>{
         setData(data.concat(response.data))
         abrirCerrarModalInsertar();
-        getComercioAdherido();
+        //getComercioAdherido();
         handleClickOpen();
         
       })
@@ -163,7 +155,7 @@ import EliminarComercio from './EliminarComercio';
         // setData(data.concat(response.data))
         setData(data.concat(response.data));
         abrirCerrarModalEditar();
-        getComercioAdherido();
+        //getComercioAdherido();
       })
       .catch(error=>{
         this.setState({ errorMessage: error.message });
@@ -176,7 +168,7 @@ import EliminarComercio from './EliminarComercio';
       .then(response =>{
         setData(data.filter(usuario=>usuario.id_comercio_adherido!==comercioSeleccionado.id_comercio_adherido));
         abrirCerrarModalEliminar();
-        getComercioAdherido();
+        //getComercioAdherido();
       })
     }
 
@@ -302,7 +294,7 @@ return(
 <Button  className={styles.root} onClick={()=>abrirCerrarModalInsertar() }>Insertar</Button>
   <br /><br />
   
-  <TableComercios data={data} seleccionarUsuario={seleccionarUsuario} />
+  <TableComercios seleccionarUsuario={seleccionarUsuario} />
  
   <Modal
     open={modalInsertar}

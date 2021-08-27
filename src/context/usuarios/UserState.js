@@ -3,7 +3,7 @@ import UserContext from './UserContext'
 import UserReducer from './UserReducer'
 import { useFetch } from '../../hooks/useFetch';
 
-import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types'
+import { INSERTAR_USUARIO, BORRAR_USUARIO, USUARIO_ERROR, SELECCIONAR_USUARIO, EDITAR_USUARIO } from '../../types/usuarios'
 import http, { BASE_URL_TIPO_USUARIO, BASE_URL_USUARIO } from '../../common/http-common';
 
 //State de usuarios

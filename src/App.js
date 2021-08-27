@@ -3,6 +3,7 @@ import './App.css';
 
 //Context
 import UserProvider from './context/usuarios/UserState';
+import ComercioProvider from './context/comercioAdherido/ComercioState';
 
 //Routing
 import RouterDom from './router';
@@ -10,7 +11,9 @@ import RouterDom from './router';
 const App = () => {
   return (
     <UserProvider>
-      <RouterDom />
+      <ComercioProvider>
+        <RouterDom /> 
+      </ComercioProvider>
     </UserProvider>
   );
 }

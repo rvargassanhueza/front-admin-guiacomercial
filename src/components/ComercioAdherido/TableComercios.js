@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import comercioContext from '../../context/comercioAdherido/ComercioContext'
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core'
 import Comercios from './Comercios'
 
-export const TableComercios = ({data, seleccionarUsuario}) => {
+export const TableComercios = ({ seleccionarUsuario }) => {
+
+    const { dataComerciosAdheridos, isLoadingComercios } = useContext(comercioContext);
+
     return (
         <TableContainer>
             <Table>
@@ -18,13 +22,16 @@ export const TableComercios = ({data, seleccionarUsuario}) => {
                 </TableHead>
 
                 <TableBody>
-                    {data.map((usuario, i) => (
-                        <Comercios
-                            key={i}
-                            usuario={usuario}
-                            seleccionarUsuario={seleccionarUsuario}
-                        />
-                    ))}
+                    {
+                        isLoadingComercios ? (<p>Cargando</p>) :
+                        (dataComerciosAdheridos.map((usuario, i) => (
+                            <Comercios
+                                key={i}
+                                usuario={usuario}
+                                seleccionarUsuario={seleccionarUsuario}
+                            />
+                        )))
+                    }
                 </TableBody>
             </Table>
         </TableContainer>
