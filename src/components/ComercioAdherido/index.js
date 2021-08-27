@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField, Select, MenuItem, InputLabel, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  } from '@material-ui/core';
-import {Edit, Delete} from '@material-ui/icons';
+import { Modal, Button, TextField, Select, MenuItem, InputLabel, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 
 import { useStyles } from "../css/ComercioAdheridoStyles";
 
@@ -9,6 +8,9 @@ import http_, { baseUrl, baseUrlCategoria, baseUrlCliente, baseUrlLocalidad } fr
 
 import ModalVerMas from './ModalVerMas';
 import InsertarComercio from './InsertarComercio';
+
+import { TableComercios } from './TableComercios';
+import EliminarComercio from './EliminarComercio';
 
   const Comercios = () => {
 
@@ -197,16 +199,6 @@ import InsertarComercio from './InsertarComercio';
       setModalEditar(!modalEditar);
     }
 
-    const bodyEliminar=(
-      <div className={styles.modal}>
-        <p>Estás seguro que deseas eliminar al Comercio <b>{comercioSeleccionado && comercioSeleccionado.nombre_comercio_adherido}</b> ? </p>
-        <div align="right">
-          <Button color="secondary" onClick={()=>deleteComercioAdherido()} >Sí</Button>
-          <Button onClick={()=>abrirCerrarModalEliminar()}>No</Button>
-        </div>
-      </div>
-      )
-
     const bodyEditar=(
       <div className={styles.modal}>
       
@@ -309,33 +301,8 @@ return(
   <br />
 <Button  className={styles.root} onClick={()=>abrirCerrarModalInsertar() }>Insertar</Button>
   <br /><br />
- <TableContainer>
-   <Table>
-     <TableHead>
-       <TableRow>
-         
-         <TableCell>Nombre Comercio Adherido</TableCell>
-         <TableCell>Descripción Comercio Adherido</TableCell>
-         <TableCell>Dirección Comercio Adherido</TableCell>
-         <TableCell>Número dirección Comercio Adherido</TableCell>
-         <TableCell>Localidad Comercio Adherido</TableCell>
-
-
-         <TableCell>Acciones</TableCell>
-       </TableRow>
-     </TableHead>
-
-     <TableBody>
-        {data.map( (usuario, i)=>(
-         <Comercios 
-            key={i} 
-            usuario={usuario} 
-            seleccionarUsuario={seleccionarUsuario} 
-        />
-       ))}
-     </TableBody>
-   </Table>
- </TableContainer>
+  
+  <TableComercios data={data} seleccionarUsuario={seleccionarUsuario} />
  
   <Modal
     open={modalInsertar}
@@ -364,7 +331,13 @@ return(
  <Modal
     open={modalEliminar}
     onClose={abrirCerrarModalEliminar}>
-    {bodyEliminar}
+    {
+      <EliminarComercio 
+        comercioSeleccionado={comercioSeleccionado} 
+        deleteComercioAdherido={deleteComercioAdherido} 
+        abrirCerrarModalEliminar={abrirCerrarModalEliminar} 
+      />
+    }
  </Modal> 
 
  <Modal

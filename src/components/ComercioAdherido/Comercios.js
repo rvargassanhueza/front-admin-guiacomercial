@@ -2,9 +2,11 @@ import React from 'react'
 import { TableRow, TableCell, Button } from '@material-ui/core';
 import { Edit, Delete } from '@material-ui/icons';
 
+import { useStyles } from "../css/ComercioAdheridoStyles";
+
 const Comercios = ({ usuario, seleccionarUsuario }) => {
 
-    console.log(usuario);
+    const styles = useStyles();
 
     const { id_comercio_adherido, nombre_comercio_adherido, descripcion_comercio_adherido,
         direccion_comercio_adherido, numero_direccion_comercio_adherido, nombre_localidad } = usuario;
