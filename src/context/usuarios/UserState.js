@@ -10,7 +10,7 @@ import http, { BASE_URL_TIPO_USUARIO, BASE_URL_USUARIO } from '../../common/http
 let initialState = {
     dataUsuarios: [],
     errorUsuario: false,
-    usuarioSeleccionado: 0
+    usuarioSeleccionado: {}
 }
 
 const UserProvider= ({children}) => {
@@ -73,12 +73,13 @@ const UserProvider= ({children}) => {
         } 
     }
 
-    const borrarUsuario = async (id, callbackModal) => {
+    const borrarUsuario = async (usuario, callbackModal) => {
+        const { id_usuario } = usuario;
         try {
-            await http.delete(`${BASE_URL_USUARIO}${id}`);
+            await http.delete(`${BASE_URL_USUARIO}${id_usuario}`);
             dispatch({
                 type: BORRAR_USUARIO,
-                payload: id
+                payload: id_usuario
             });
         } catch (error) {
             dispatch({

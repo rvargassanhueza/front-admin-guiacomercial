@@ -20,7 +20,7 @@ const Usuarios = ({ usuario, abrirCerrarModalEliminar, seleccionarUsuario }) => 
           Editar
         </Link>
         &nbsp;&nbsp;&nbsp;
-        <Delete className={styles.iconos} onClick={() => seleccionarUsuario(id_usuario, abrirCerrarModalEliminar)} />
+        <Delete className={styles.iconos} onClick={() => seleccionarUsuario(usuario, abrirCerrarModalEliminar)} />
       </TableCell>
     </TableRow>
   );

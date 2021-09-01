@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import { Modal, Button, TextField, Select, MenuItem, InputLabel, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Modal, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 
 import { useStyles } from "../css/ComercioAdheridoStyles";
 
-import http from '../../common/http-common'
-import http_, { baseUrl, baseUrlCategoria, baseUrlCliente, baseUrlLocalidad } from "../../common/http-comercio_adherido"
+import http_, { baseUrl } from "../../common/http-comercio_adherido"
 
 import ModalVerMas from './ModalVerMas';
 import InsertarComercio from './InsertarComercio';
@@ -12,361 +11,205 @@ import InsertarComercio from './InsertarComercio';
 import { TableComercios } from './TableComercios';
 import EliminarComercio from './EliminarComercio';
 
-  const Comercios = () => {
+const Comercios = () => {
 
-    const styles= useStyles();
+  const styles = useStyles();
 
-    const [data, setData]                       = useState([]);
-    const [dataId, setDataId]                   = useState([]);
+  const [data, setData] = useState([]);
+  const [dataId, setDataId] = useState([]);
 
-    const [modalEliminar, setModalEliminar]     = useState(false);
-    const [modalInsertar, setModalInsertar]     = useState(false);
-    const [modalEditar, setModalEditar]         = useState(false);
-    const [modalVerMas, setModalVerMas]         = useState(false);
+  const [modalEliminar, setModalEliminar] = useState(false);
+  const [modalInsertar, setModalInsertar] = useState(false);
+  const [modalEditar, setModalEditar] = useState(false);
+  const [modalVerMas, setModalVerMas] = useState(false);
 
-    const [itemSelected, setItemSelected]       = useState();
-    const [items, setItems]                     = useState([]);
-    const [itemsClientes, setItemsClientes]     = useState([]);
-    const [itemsCategorias, setItemsCategorias] = useState([]);
+  const [itemSelected, setItemSelected] = useState();
 
-    const [comercioSeleccionado, setComercioSeleccionado] = useState({
-    
-        // id_comercio_adherido: '', 
-        // nombre_comercio_adherido: '',
-        // descripcion_comercio_adherido:'',
-        // direccion_comercio_adherido:'',
-        // numero_direccion_comercio_adherido:'',
-        // detalle_comercio_adherido:'',
-        // url_facebook_comercio_adherido:'',
-        // url_twitter_comercio_adherido:'',
-        // url_youtube_comercio_adherido:'',
-        // url_whatsapp_comercio_adherido:'',
-        // url_instagram_comercio_adherido:'',
-        // url_web_comercio_adherido:'',
-        // nombre_localidad:'',
-        // nombre_cliente:'',
-        // nombre_categoria:''
-      
-    })
+  const [comercioSeleccionado, setComercioSeleccionado] = useState({
 
+    // id_comercio_adherido: '', 
+    // nombre_comercio_adherido: '',
+    // descripcion_comercio_adherido:'',
+    // direccion_comercio_adherido:'',
+    // numero_direccion_comercio_adherido:'',
+    // detalle_comercio_adherido:'',
+    // url_facebook_comercio_adherido:'',
+    // url_twitter_comercio_adherido:'',
+    // url_youtube_comercio_adherido:'',
+    // url_whatsapp_comercio_adherido:'',
+    // url_instagram_comercio_adherido:'',
+    // url_web_comercio_adherido:'',
+    // nombre_localidad:'',
+    // nombre_cliente:'',
+    // nombre_categoria:''
 
-    const [file, setFile ] = useState();
-    const [open, setOpen ] = useState(false);
-    
-    const saveFile = (e) => {
-      setFile(e.target.files[0]);
-    };
+  })
 
-    const handleChange=e=>{
-      const {name, value}=e.target;
-      
-      setComercioSeleccionado(prevState=>({
-        ...prevState,
-        [name]: value
-      }))
+  const [open, setOpen] = useState(false);
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+
+    setComercioSeleccionado(prevState => ({
+      ...prevState,
+      [name]: value
+    }))
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const seleccionarUsuario = (usuario, caso) => {
+
+    setComercioSeleccionado(usuario);
+
+    if (caso === 'Editar') {
+      abrirCerrarModalEditar()
+    } else if (caso === 'Eliminar') {
+      abrirCerrarModalEliminar()
+    } else {
+      abrirCerrarModalVerMas(usuario)
     }
+  }
 
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
-
-    const seleccionarUsuario=(usuario, caso)=>{
-
-      setComercioSeleccionado(usuario);
-
-       if(caso === 'Editar'){
-        abrirCerrarModalEditar()
-       }else if(caso=== 'Eliminar'){
-        abrirCerrarModalEliminar()
-       }else{
-        abrirCerrarModalVerMas(usuario)
-       }
-    }
-
-      useEffect(() => {
-          (async () => {
-             //getComercioAdherido();
-          })();
-          getLocalidad();
-          getCliente();
-          getCategoria(); 
-      }, []);
-
-    async function getLocalidad(){
-      const datos_ = await http.get(baseUrlLocalidad);
-      const {data} = datos_.data;
-      
-      setItems(data);
-    }
-
-    async function getCliente(){
-      const datos_ = await http.get(baseUrlCliente);
-      const {data} = datos_.data;
-      
-      setItemsClientes(data);
-    }
-
-    async function getCategoria(){
-      const datos_ = await http.get(baseUrlCategoria);
-      const {data} = datos_.data;
-      
-      setItemsCategorias(data);
-    }
-
-    const getComercioAdheridoId = async(id)=>{
-      await http_.get(baseUrl + id)
-      .then(response=>{
-        const {data:{data}} = response;
+  const getComercioAdheridoId = async (id) => {
+    await http_.get(baseUrl + id)
+      .then(response => {
+        const { data: { data } } = response;
         setDataId(data);
       })
+  }
+
+  const insertComercioAdherido = async () => {
+
+    const formData = new FormData();
+    for (let key in comercioSeleccionado) {
+      formData.append(key, comercioSeleccionado[key]);
     }
 
-    const insertComercioAdherido = async()=>{
-
-      const formData = new FormData();
-      formData.append("detalle_comercio_adherido", file);
-      for(let key in comercioSeleccionado){
-        formData.append(key,comercioSeleccionado[key]);
-      }
-
-      await http_.post(baseUrl, formData)
-      .then(response=>{
+    await http_.post(baseUrl, formData)
+      .then(response => {
         setData(data.concat(response.data))
         abrirCerrarModalInsertar();
         //getComercioAdherido();
         handleClickOpen();
-        
+
       })
-      .catch(error=>{
+      .catch(error => {
         this.setState({ errorMessage: error.message });
         window.alert("Ha ocurrido un error al registrar el Comercio Adherido")
 
-            console.error('There was an error!', error);
+        console.error('There was an error!', error);
       });
-    }
+  }
 
-    const editComercioAdherido = async()=>{
-      await http_.put(baseUrl + comercioSeleccionado.id_comercio_adherido,comercioSeleccionado)
-      .then(response=>{
+  const editComercioAdherido = async () => {
+    await http_.put(baseUrl + comercioSeleccionado.id_comercio_adherido, comercioSeleccionado)
+      .then(response => {
         // setData(data.concat(response.data))
         setData(data.concat(response.data));
         abrirCerrarModalEditar();
         //getComercioAdherido();
       })
-      .catch(error=>{
+      .catch(error => {
         this.setState({ errorMessage: error.message });
-            console.error('There was an error!', error);
+        console.error('There was an error!', error);
       });
-    }
+  }
 
-    const deleteComercioAdherido = async()=>{
-      await http_.delete(baseUrl + comercioSeleccionado.id_comercio_adherido)
-      .then(response =>{
-        setData(data.filter(usuario=>usuario.id_comercio_adherido!==comercioSeleccionado.id_comercio_adherido));
+  const deleteComercioAdherido = async () => {
+    await http_.delete(baseUrl + comercioSeleccionado.id_comercio_adherido)
+      .then(response => {
+        setData(data.filter(usuario => usuario.id_comercio_adherido !== comercioSeleccionado.id_comercio_adherido));
         abrirCerrarModalEliminar();
         //getComercioAdherido();
       })
+  }
+
+  const abrirCerrarModalVerMas = (usuario) => {
+    setModalVerMas(!modalVerMas);
+    if (usuario) {
+      getComercioAdheridoId(usuario.id_comercio_adherido);
     }
+  }
 
-    const abrirCerrarModalVerMas=(usuario)=>{
-      setModalVerMas(!modalVerMas);
-      if(usuario){
-        getComercioAdheridoId(usuario.id_comercio_adherido);
-      }
-    }
+  const abrirCerrarModalEliminar = () => setModalEliminar(!modalEliminar);
+  const abrirCerrarModalInsertar = () => setModalInsertar(!modalInsertar);
+  const abrirCerrarModalEditar = () => setModalEditar(!modalEditar);
 
-    const abrirCerrarModalEliminar=()=>{
-      setModalEliminar(!modalEliminar);
-    }
+  return (
 
-    const abrirCerrarModalInsertar=()=>{
-      setModalInsertar(!modalInsertar);
-    }
+    <div className="usuarios">
+      <br />
+      <Button className={styles.root} onClick={() => abrirCerrarModalInsertar()}>Insertar</Button>
+      <br /><br />
 
-    const abrirCerrarModalEditar=()=>{
-      setModalEditar(!modalEditar);
-    }
+      <TableComercios seleccionarUsuario={seleccionarUsuario} />
 
-    const bodyEditar=(
-      <div className={styles.modal}>
-      
-          <h3>Editar Comercio</h3>
-          <TextField name="nombre_comercio_adherido" className={styles.inputMaterial}  onChange={handleChange} value={comercioSeleccionado.nombre_comercio_adherido}disabled="true"/>
-          <br />
-          <InputLabel className={styles.inputMaterial}>Localidad</InputLabel>
-          <Select
-                labelId="Localidad"
-                id="id_localidad"
-                value={itemSelected}
-                onChange={handleChange}
-                className={styles.inputMaterial}
-                name="id_localidad">
-  
-                {items.map((row, index) => (
-                <MenuItem key={index} value={row.id_localidad}>
-                  {row.nombre_localidad}
-                </MenuItem>))}
-              </Select>
-              <InputLabel className={styles.inputMaterial}>Cliente</InputLabel>
-              <Select
-                labelId="Cliente"
-                id="id_cliente"
-                value={itemSelected}
-                onChange={handleChange}
-                className={styles.inputMaterial}
-                name="id_cliente">
-  
-                {itemsClientes.map((row, index) => (
-                <MenuItem key={index} value={row.id_cliente}>
-                  {row.nombre_cliente}
-                </MenuItem>))}
-              </Select>
-              <InputLabel className={styles.inputMaterial}>Categoría</InputLabel>
-  
-              <Select
-                labelId="Categoría"
-                id="categorias"
-                value={itemSelected}
-                onChange={handleChange}
-                className={styles.inputMaterial}
-                name="categorias">
-  
-                {itemsCategorias.map((row, index) => (
-                <MenuItem key={index} value={row.id_categoria}>
-                  {row.nombre_categoria}
-                </MenuItem>))}
-              </Select>
-          
-          <TextField name="descripcion_comercio_adherido" className={styles.inputMaterial} label="Descripción Comercio Adherido" onChange={handleChange}
-          value={comercioSeleccionado.descripcion_comercio_adherido}/>
-          <br />
-  
-          <TextField name="direccion_comercio_adherido" className={styles.inputMaterial} label="Dirección Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="numero_direccion_comercio_adherido" className={styles.inputMaterial} label="Número Dirección Comercio Adherido" onChange={handleChange}/>
-          <br />
-          <InputLabel className={styles.inputMaterial}>Imagen Comercio Adherido</InputLabel>
-  
-          <TextField name="detalle_comercio_adherido" className={styles.inputMaterial} label="Imagen Comercio Adherido" onChange={handleChange} type="file"/>
-          <br />
-  
-          <TextField name="url_facebook_comercio_adherido" className={styles.inputMaterial} label="Url Facebook Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_twitter_comercio_adherido" className={styles.inputMaterial} label="Url Twitter Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_youtube_comercio_adherido" className={styles.inputMaterial} label="Url Youtube Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_whatsapp_comercio_adherido" className={styles.inputMaterial} label="Url Whatsapp Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_instagram_comercio_adherido" className={styles.inputMaterial} label="Url Instagram Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
-          <br />
-  
-          <TextField name="url_web_comercio_adherido" className={styles.inputMaterial} label="Url Web Comercio Adherido" onChange={handleChange}/>
-          <br />
-    
-          
-          <div align="right">
-            <Button color="primary" onClick={()=>editComercioAdherido()}>Editar</Button>
-            <Button onClick={()=>abrirCerrarModalEditar()}>Cancelar</Button>
-          </div>
-        </div>
-      )
-    
-return(
+      <Modal
+        open={modalInsertar}
+        onClose={abrirCerrarModalInsertar}>
+        { <InsertarComercio abrirCerrarModalInsertar={abrirCerrarModalInsertar} /> }
+      </Modal>
 
-  <div className="usuarios">
-  <br />
-<Button  className={styles.root} onClick={()=>abrirCerrarModalInsertar() }>Insertar</Button>
-  <br /><br />
-  
-  <TableComercios seleccionarUsuario={seleccionarUsuario} />
- 
-  <Modal
-    open={modalInsertar}
-    onClose={abrirCerrarModalInsertar}>
-    { 
-      <InsertarComercio 
-        handleChange={handleChange}
-        abrirCerrarModalInsertar={abrirCerrarModalInsertar}
-        insertComercioAdherido={insertComercioAdherido}
-        MenuItem={MenuItem}
-        itemSelected={itemSelected}
-        items={items}
-        itemsClientes={itemsClientes}
-        itemsCategorias={itemsCategorias}
-        saveFile={saveFile}
-      />
-    }
- </Modal>
-
- {/* <Modal
+      {/* <Modal
     open={modalEditar}
     onClose={abrirCerrarModalEditar}>
     {bodyEditar}
  </Modal> */}
 
- <Modal
-    open={modalEliminar}
-    onClose={abrirCerrarModalEliminar}>
-    {
-      <EliminarComercio 
-        comercioSeleccionado={comercioSeleccionado} 
-        deleteComercioAdherido={deleteComercioAdherido} 
-        abrirCerrarModalEliminar={abrirCerrarModalEliminar} 
-      />
-    }
- </Modal> 
+      <Modal
+        open={modalEliminar}
+        onClose={abrirCerrarModalEliminar}>
+        {
+          <EliminarComercio
+            comercioSeleccionado={comercioSeleccionado}
+            deleteComercioAdherido={deleteComercioAdherido}
+            abrirCerrarModalEliminar={abrirCerrarModalEliminar}
+          />
+        }
+      </Modal>
 
- <Modal
-    open={modalVerMas}
-    onClose={abrirCerrarModalVerMas}>
-    {
-      <ModalVerMas 
-        handleChange={handleChange} 
-        dataId={dataId} 
-        abrirCerrarModalVerMas={abrirCerrarModalVerMas} 
-      />
-    }
- </Modal>
+      <Modal
+        open={modalVerMas}
+        onClose={abrirCerrarModalVerMas}>
+        {
+          <ModalVerMas
+            handleChange={handleChange}
+            dataId={dataId}
+            abrirCerrarModalVerMas={abrirCerrarModalVerMas}
+          />
+        }
+      </Modal>
 
- <Dialog
+      <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
->
+      >
 
-<DialogTitle id="alert-dialog-title">{"Comercio Adherido Agregado Correctamente"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Comercio Adherido Agregado Correctamente"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-          Comercio Adherido Agregado Correctamente
+            Comercio Adherido Agregado Correctamente
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          
+
           <Button onClick={handleClose} color="primary" autoFocus>
             Ok
           </Button>
         </DialogActions>
-</Dialog>
+      </Dialog>
 
-</div>
- );
+    </div>
+  );
 }
 
-  export default Comercios;
+export default Comercios;
