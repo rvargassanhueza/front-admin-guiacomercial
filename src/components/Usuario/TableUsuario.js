@@ -12,6 +12,8 @@ import {
 import Usuarios from "./Usuarios";
 import UserContext from "../../context/usuarios/UserContext";
 
+import { ClipLoader } from 'react-spinners';
+
 const TableUsuario = ({isLoadingData, abrirCerrarModalEliminar }) => {
 
   const { seleccionarUsuario, dataUsuarios } = useContext(UserContext);
@@ -32,13 +34,13 @@ const TableUsuario = ({isLoadingData, abrirCerrarModalEliminar }) => {
           {!isLoadingData ? (
             dataUsuarios.map((usuario, i) => (
               <Usuarios
-                key={i}
+                key={usuario.id_usuario}
                 usuario={usuario}
                 abrirCerrarModalEliminar={abrirCerrarModalEliminar}
                 seleccionarUsuario={seleccionarUsuario}
               />
             ))
-          ):(<p>Cargando...</p>)}
+          ):(<ClipLoader size={100} color="red" />)}
         </TableBody>
       </Table>
     </TableContainer>

@@ -1,6 +1,6 @@
 
 export const MENSAJES_STR = {
-    editarUsuario: {
+    usuarioValues: {
         nombre : {
             obligatorio: 'Nombre obligatorio',
             caracteres: 'Nombre mínimo de 5 caracteres'
@@ -11,7 +11,7 @@ export const MENSAJES_STR = {
         },
         password:{
             obligatorio: 'Contraseña obligatoria',
-            segundaPass: 'Confirmar contraseña es obligatorio',
+            confirmar: 'Confirmar contraseña es obligatorio',
             distintas: 'Las contraseñas no coinciden'
         },
         select: 'Tipo usuario obligatorio'
