@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { Link } from "react-router-dom"; 
 import { TableRow, TableCell, Button } from '@material-ui/core';
 import { Edit, Delete } from '@material-ui/icons';
 
@@ -22,7 +23,9 @@ const Comercios = ({ usuario, seleccionarUsuario }) => {
                 <Button className={styles.root} onClick={() => seleccionarUsuario(usuario, 'Ver Mas')}>Ver Más</Button>
             </TableCell>
             <TableCell>
-                <Edit className={styles.iconos} onClick={() => seleccionarUsuario(usuario, 'Editar')} />
+                <Link to={`/comercios/editar/${id_comercio_adherido}`} className={styles.iconos}>
+                    Editar
+                </Link>
                 &nbsp;&nbsp;&nbsp;
                 <Delete className={styles.iconos} onClick={() => seleccionarUsuario(usuario, 'Eliminar')} />
             </TableCell>

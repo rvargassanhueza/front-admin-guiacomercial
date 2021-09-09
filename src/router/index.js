@@ -11,8 +11,9 @@ import Usuarios from '../components/Usuario';
 import Geograficos from '../pages/Geograficos';
 import Navbar from '../components/shared/Navbar';
 
-//Editar Usuario
+//Editar
 import EditarUsuario from '../components/Usuario/EditarUsuario';
+import EditarComercio from '../components/ComercioAdherido/EditarComercio';
 
 const RouterDom = () => {
   return (
@@ -24,6 +25,7 @@ const RouterDom = () => {
           <Route path='/categorias' exact component={Categorias} />
           <Route path='/subcategorias' exact component={SubCategorias} />
           <Route path='/comercios' exact component={Comercios} />
+          <Route path='/comercios/editar/:id' exact component={EditarComercio} />
           <Route path='/usuarios' exact component={Usuarios} />
           <Route path="/usuario/editar/:id" exact component={ EditarUsuario } />
           <Route path='/geograficos' exact component={Geograficos} />
